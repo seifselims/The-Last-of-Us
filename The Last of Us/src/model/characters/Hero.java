@@ -30,10 +30,15 @@ public ArrayList<Vaccine> getVaccineInventory() {
 public ArrayList<Supply> getSupplyInventory() {
 	return supplyInventory;
 }
-public Hero(String name, int maxHp, int attackDmg, int maxAction ) {
+
+public Hero(String name, int maxHp, int attackDmg, int maxActions ) {
 		super(name, maxHp, attackDmg);
 		this.maxActions=maxActions;
 		this.actionsAvailable=maxActions;
+		this.vaccineInventory=new ArrayList<Vaccine>();
+		this.supplyInventory=new ArrayList<Supply>();
+
+		
 	}
 }
 
