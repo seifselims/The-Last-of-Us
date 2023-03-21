@@ -13,6 +13,7 @@ public Character(String name, int maxHp, int attackDmg) {
 	this.name=name;
 	this.maxHp=maxHp;
 	this.attackDmg=attackDmg;
+	this.currentHp=maxHp;
 }
 public Character() {
 	
@@ -27,7 +28,9 @@ public int getCurrentHp() {
 	return currentHp;
 }
 public void setCurrentHp(int currentHp) {
-	this.currentHp = currentHp;
+	this.currentHp=currentHp;
+	if(this.currentHp>maxHp)
+	this.currentHp=maxHp;
 }
 public Character getTarget() {
 	return target;
