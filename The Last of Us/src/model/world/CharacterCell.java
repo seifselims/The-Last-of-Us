@@ -1,8 +1,8 @@
 package model.world;
 
 public class CharacterCell extends Cell {
-Character character;
-boolean isSafe;
+private Character character;
+private boolean isSafe;
 public Character getCharacter() {
 	return character;
 }

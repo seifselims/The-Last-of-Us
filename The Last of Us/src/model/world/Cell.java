@@ -1,6 +1,6 @@
 package model.world;
 
-public class Cell {
+public class Cell { 
 private boolean isVisible;
 public Cell() {
 	
