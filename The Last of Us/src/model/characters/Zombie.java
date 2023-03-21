@@ -9,7 +9,6 @@ public Zombie(String name, int maxHp, int attackDmg) {
 	}
 public Zombie() {
 	new Zombie(getName(),40,10);
-
 }
 
 

@@ -9,12 +9,11 @@ import model.characters.Medic;
 import model.characters.Zombie;
 import model.world.Cell;
 public class Game {
-public  static ArrayList<Hero> availableHeros;
-public static ArrayList<Hero> heros;
+public  static ArrayList<Hero> availableHeroes;
+public static ArrayList<Hero> heroes;
 public static ArrayList<Zombie> zombies;
-public static Cell [][] map;
-public static void loadHeros(String filePath) 
-			
+public static Cell [][] map; 
+public static void loadHeroes(String filePath) 
 		throws Exception {
 			FileReader reader = new FileReader(filePath);
 			BufferedReader br = new BufferedReader(reader);
@@ -24,18 +23,21 @@ public static void loadHeros(String filePath)
 				String[] tempArr = line.split(",");
 				if (tempArr[1].equals("FIGH")) {
 				Hero f = new Fighter(tempArr[0], (Integer.parseInt(tempArr[2])), (Integer.parseInt(tempArr[3])), (Integer.parseInt(tempArr[4])));
-				availableHeros.add(f);
+				availableHeroes.add(f);
 				}
 				else if (tempArr[1].equals("MED")) {
 					Hero m = new Medic(tempArr[0], (Integer.parseInt(tempArr[2])), (Integer.parseInt(tempArr[3])), (Integer.parseInt(tempArr[4])));
-					availableHeros.add(m);
+					availableHeroes.add(m);
 					}
 				else {
 					Hero e = new Explorer(tempArr[0], (Integer.parseInt(tempArr[2])), (Integer.parseInt(tempArr[3])), (Integer.parseInt(tempArr[4])));
-					availableHeros.add(e);
+					availableHeroes.add(e);
 					}
 			}
-			br.close();
+		
+		br.close();
+		
+		}
 }
-}
+
 
