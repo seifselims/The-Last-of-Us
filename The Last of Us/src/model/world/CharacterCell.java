@@ -1,5 +1,4 @@
 package model.world;
-
 public class CharacterCell extends Cell {
 private Character character;
 private boolean isSafe;
