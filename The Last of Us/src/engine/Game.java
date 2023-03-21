@@ -1,6 +1,7 @@
 package engine;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import model.characters.Explorer;
 import model.characters.Fighter;
@@ -13,24 +14,23 @@ public  static ArrayList<Hero> availableHeroes;
 public static ArrayList<Hero> heroes;
 public static ArrayList<Zombie> zombies;
 public static Cell [][] map; 
-public static void loadHeroes(String filePath) 
-		throws Exception {
+public static void loadHeroes(String filePath) throws Exception {
 			FileReader reader = new FileReader(filePath);
 			BufferedReader br = new BufferedReader(reader);
-			while(br.readLine() != null) 
-			{
-				String line=br.readLine();
-				String[] tempArr = line.split(",");
+			String line=null;
+			while( ((line =br.readLine()) != null)) 	{
+				String[] tempArr = line.split(",");	
+			
 				if (tempArr[1].equals("FIGH")) {
-				Hero f = new Fighter(tempArr[0], (Integer.parseInt(tempArr[2])), (Integer.parseInt(tempArr[3])), (Integer.parseInt(tempArr[4])));
+				Hero f = new Fighter(tempArr[0], (Integer.parseInt(tempArr[2])), (Integer.parseInt(tempArr[4])), (Integer.parseInt(tempArr[3])));
 				availableHeroes.add(f);
 				}
 				else if (tempArr[1].equals("MED")) {
-					Hero m = new Medic(tempArr[0], (Integer.parseInt(tempArr[2])), (Integer.parseInt(tempArr[3])), (Integer.parseInt(tempArr[4])));
+					Hero m = new Medic(tempArr[0], (Integer.parseInt(tempArr[2])), (Integer.parseInt(tempArr[4])), (Integer.parseInt(tempArr[3])));
 					availableHeroes.add(m);
 					}
 				else {
-					Hero e = new Explorer(tempArr[0], (Integer.parseInt(tempArr[2])), (Integer.parseInt(tempArr[3])), (Integer.parseInt(tempArr[4])));
+					Hero e = new Explorer(tempArr[0], (Integer.parseInt(tempArr[2])), (Integer.parseInt(tempArr[4])), (Integer.parseInt(tempArr[3])));
 					availableHeroes.add(e);
 					}
 			}
@@ -39,5 +39,6 @@ public static void loadHeroes(String filePath)
 		
 		}
 }
+
 
 

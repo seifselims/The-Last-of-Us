@@ -11,6 +11,8 @@ public TrapCell() {
     int max = numbers.length;
     int random = (int)(Math.random() * max);
     trapDamage = numbers[random];
-    System.out.print(trapDamage);
+   
 }
+
+
 }
