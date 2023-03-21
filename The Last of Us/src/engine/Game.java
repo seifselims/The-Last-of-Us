@@ -20,24 +20,24 @@ public static void loadHeroes(String filePath)
 			while(br.readLine() != null) 
 			{
 				String line=br.readLine();
-				String[] tempArr = line.split(",");
+				String[] tempArr = line.split(", ");
 				if (tempArr[1].equals("FIGH")) {
-				Hero f = new Fighter(tempArr[0], (Integer.parseInt(tempArr[2])), (Integer.parseInt(tempArr[3])), (Integer.parseInt(tempArr[4])));
+				Hero f = new Fighter(tempArr[0], (Integer.parseInt(tempArr[2])), (Integer.parseInt(tempArr[4])), (Integer.parseInt(tempArr[3])));
 				availableHeroes.add(f);
 				}
 				else if (tempArr[1].equals("MED")) {
-					Hero m = new Medic(tempArr[0], (Integer.parseInt(tempArr[2])), (Integer.parseInt(tempArr[3])), (Integer.parseInt(tempArr[4])));
+					Hero m = new Medic(tempArr[0], (Integer.parseInt(tempArr[2])), (Integer.parseInt(tempArr[4])), (Integer.parseInt(tempArr[3])));
 					availableHeroes.add(m);
 					}
 				else {
-					Hero e = new Explorer(tempArr[0], (Integer.parseInt(tempArr[2])), (Integer.parseInt(tempArr[3])), (Integer.parseInt(tempArr[4])));
+					Hero e = new Explorer(tempArr[0], (Integer.parseInt(tempArr[2])), (Integer.parseInt(tempArr[4])), (Integer.parseInt(tempArr[3])));
 					availableHeroes.add(e);
 					}
 			}
 		
 		br.close();
-		
 		}
-}
+		}
+
 
 
