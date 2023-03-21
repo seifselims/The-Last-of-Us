@@ -6,7 +6,7 @@ private int actionsAvailable;
 private int maxActions;
 private boolean specialAction;
 private  ArrayList<Vaccine> vaccineInventory;
-private  ArrayList<Vaccine> SupplyInventory;
+private  ArrayList<Vaccine> supplyInventory;
 public int getActionsAvailable() {
 	return actionsAvailable;
 }
@@ -26,7 +26,7 @@ public ArrayList<Vaccine> getVaccineInventory() {
 	return vaccineInventory;
 }
 public ArrayList<Vaccine> getSupplyInventory() {
-	return SupplyInventory;
+	return supplyInventory;
 }
 public Hero(String name, int maxHp, int attackDmg, int maxActions) {
 		super(name, maxHp, attackDmg);
