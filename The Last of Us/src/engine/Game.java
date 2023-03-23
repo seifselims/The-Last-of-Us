@@ -14,6 +14,12 @@ public  static ArrayList<Hero> availableHeroes;
 public static ArrayList<Hero> heroes;
 public static ArrayList<Zombie> zombies;
 public static Cell [][] map; 
+public Game() {
+	availableHeroes=new ArrayList<Hero>();
+	heroes=new ArrayList<Hero>();
+	zombies=new ArrayList<Zombie>();
+	map=new Cell[15][15];
+}
 public static void loadHeroes(String filePath) throws Exception {
 			FileReader reader = new FileReader(filePath);
 			BufferedReader br = new BufferedReader(reader);

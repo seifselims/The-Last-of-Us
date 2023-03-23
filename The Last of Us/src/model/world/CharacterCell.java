@@ -1,6 +1,11 @@
 package model.world;
 import model.characters.Character;
 public class CharacterCell extends Cell {
+public CharacterCell(Character character, boolean isSafe) {
+		super();
+		this.character = character;
+		this.isSafe = isSafe;
+	}
 private Character character;
 public CharacterCell(Character character) {
 	super();

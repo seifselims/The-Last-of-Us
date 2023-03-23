@@ -29,6 +29,8 @@ public int getCurrentHp() {
 }
 public void setCurrentHp(int currentHp) {
 	this.currentHp=currentHp;
+	if (this.currentHp<0)
+	this.currentHp=0;
 	if(this.currentHp>maxHp)
 	this.currentHp=maxHp;
 }
