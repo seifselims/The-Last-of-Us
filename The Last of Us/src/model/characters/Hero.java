@@ -3,7 +3,7 @@ import java.util.ArrayList;
 
 import model.collectibles.Supply;
 import model.collectibles.Vaccine;
-public class Hero extends Character {
+abstract public class Hero extends Character {
 private int actionsAvailable;
 private int maxActions;
 private boolean specialAction;
