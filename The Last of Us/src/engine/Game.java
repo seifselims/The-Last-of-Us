@@ -48,7 +48,7 @@ public static void startGame(Hero h) {
 	availableHeroes.remove(h);
 	CharacterCell x=new CharacterCell((h));
 	map [0][0]=x;
-/*	for (int i=0;i<5;i++) {
+	for (int i=0;i<5;i++) {
 		CollectibleCell m=new CollectibleCell(new Vaccine());
 		CollectibleCell n=new CollectibleCell(new Supply());
 		int a = (int)(Math.random()*(14-0+1)+0);  
@@ -65,7 +65,7 @@ public static void startGame(Hero h) {
 			 b = (int)(Math.random()*(14-0+1)+0);  
 		}
 		map[a][b]=n;
-	}*/
+	}
 	for (int i=0;i<5;i++) {
 		int a = (int)(Math.random()*(14-0+1)+0);  
 		int b = (int)(Math.random()*(14-0+1)+0); 
@@ -86,12 +86,12 @@ public static void startGame(Hero h) {
 		map[a][b]=z;
 	}
 }
-public static boolean checkWin() {
-	if(availableHeroes.size()>=5)
+/*public static boolean checkWin() {
+	if(availableHeroes.size()>=5 || )
 		return true;
 	else
 		return false;
-}
+}*/
 		}
 
 
