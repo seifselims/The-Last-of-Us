@@ -31,7 +31,9 @@ public ArrayList<Vaccine> getVaccineInventory() {
 public ArrayList<Supply> getSupplyInventory() {
 	return supplyInventory;
 }
-
+public void move (Direction d)  {
+	
+}
 public Hero(String name, int maxHp, int attackDmg, int maxActions ) {
 		super(name, maxHp, attackDmg);
 		this.maxActions=maxActions;
