@@ -8,6 +8,7 @@ import model.characters.Fighter;
 import model.characters.Hero;
 import model.characters.Medic;
 import model.characters.Zombie;
+import model.collectibles.Collectible;
 import model.collectibles.Supply;
 import model.collectibles.Vaccine;
 import model.world.Cell;
@@ -86,12 +87,28 @@ public static void startGame(Hero h) {
 		map[a][b]=z;
 	}
 }
-/*public static boolean checkWin() {
-	if(availableHeroes.size()>=5 || )
+public static boolean checkWin() {
+	boolean x=true;
+	boolean y=true;
+	for(int a=0;a<15;a++) {
+		for(int b=0;b<15;b++) {
+			if (map[a][b] instanceof CollectibleCell) {
+				CollectibleCell m=(CollectibleCell)map[a][b];
+				Collectible n=(Collectible)m;
+				if(n instanceof Vaccine)
+					x=false;
+			}
+		}
+	}
+	for(int i=0;i<availableHeroes.size();i++) {
+		if(availableHeroes.get(i).getVaccineInventory().size()!=0)
+			y=false;
+	}
+	if(availableHeroes.size()>=5 && x==true && y==true )
 		return true;
 	else
 		return false;
-}*/
+}
 		}
 
 
