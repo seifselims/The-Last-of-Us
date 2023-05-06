@@ -109,7 +109,53 @@ public static boolean checkWin() {
 	else
 		return false;
 }
+public static boolean checkGameOver() {
+	boolean x=true;
+	boolean y=true;
+	for(int a=0;a<15;a++) {
+		for(int b=0;b<15;b++) {
+			if (map[a][b] instanceof CollectibleCell) {
+				CollectibleCell m=(CollectibleCell)map[a][b];
+				Collectible n=(Collectible)m;
+				if(n instanceof Vaccine)
+					x=false;
+			}
 		}
+	}
+	for(int i=0;i<availableHeroes.size();i++) {
+		if(availableHeroes.get(i).getVaccineInventory().size()!=0)
+			y=false;
+	}
+	if((availableHeroes.size()==0) || (x==true) && (y==true) ) {
+		return true;
+	}
+	return false;	
+}
+
+public static void endTurn() {
+	for(int a=0;a<map.length;a++) {
+		for(int b=0;b<map[a].length;b++) {
+			if(zombies.get(a).adjacent(heroes.get(b))) {
+				zombies.get(a).attack();
+			if(heroes.get(b).getActionsAvailable()!=heroes.get(b).getMaxActions())
+				heroes.get(b).setActionsAvailable(heroes.get(b).getMaxActions());
+		}
+			if(map[a][b] instanceof CharacterCell && ((CharacterCell) map[a][b]).getCharacter() instanceof Hero && heroes.get(a).adjacent(heroes.get(b)))
+				Cell.setVisible(true);		
+			if(heroes.get(b).isSpecialAction()==false)
+				heroes.get(b).setSpecialAction(true);
+			if(heroes.get(b).getTarget() == null)
+				heroes.get(b).setTarget(zombies.get(a));;
+		}
+			}
+	Zombie zombie=new Zombie();
+	int random= (int) (Math.random()*(14-0+1)+0);
+	zombies.add(random,zombie);
+	CharacterCell charzombie= new CharacterCell(zombie);
+	map[random][random]=charzombie;
+	}
+
+}
 
 
 

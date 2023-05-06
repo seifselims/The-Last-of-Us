@@ -9,7 +9,7 @@ default void pickUp(Hero h){
 	else
 	h.getVaccineInventory().add((Vaccine)this);
 }
-default void use(Hero h) {
+ default void use(Hero h) {
 	if (this instanceof Supply)
 		h.getSupplyInventory().remove((Supply)this);
 	else
