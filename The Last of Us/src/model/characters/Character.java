@@ -2,6 +2,7 @@ package model.characters;
 import java.awt.Point;
 
 import engine.Game;
+import exceptions.NotEnoughActionsException;
 import model.world.CharacterCell;
 
 abstract public class Character {
@@ -54,6 +55,7 @@ public int getAttackDmg() {
 public boolean adjacent(Character e) {
 	Point l=this.getLocation();
 	Point l2=e.getLocation();
+	
 	if(l.x>14 || l.x<0)
 		return false;
 	else if (l.y>14 || l.y<0)
@@ -62,24 +64,24 @@ public boolean adjacent(Character e) {
 		return false;
 	else if (l2.y>14 || l2.y<0)
 		return false;
-	if (l.x==0 || l.x==14) {
-		if(l2.y==l.y-1 || l2.y==l.y+1 || (l2.x==1 && (l2.y==l.y+1 || l2.y==l.y-1)))
+	if ((l.x==0 || l.x==14 &&( l.y==0 || l.y==14))) {
+		if((l.x==l2.x && l2.y==l.y-1 || l2.y==l.y+1) || ((l2.x==l.x+1 && l2.y==l.y+1) || (l2.x==l.x-1 && l2.y==l.y-1)))
 			return true;
 		else
 			return false;
 	}
-	else if (l.y==0 || l.y==14) {
+	/*else if ((l.y==0 || l.y==14) && l.y==l2.y) {
 		if(l2.x==l.x-1 || l2.x==l.x+1 || (l2.y==1 && (l2.x==l.x+1 || l2.x==l.x-1)))
 			return true;
 		else
 			return false;
-	}
+	}*/
 	else if(((l2.x==l.x+1||l2.x==l.x-1) && l2.y==l.y)|| ((l2.y==l.y+1 || l2.y==l.y-1) && l2.x==l.x )|| (l2.x==l.x+1 && (l2.y==l.y+1 || l2.y==l.y-1)) || (l2.x==l.x-1 && (l2.y==l.y-1 || l2.y==l.y+1)))
 			return true;
 	else
 		return false;
 }
-public void attack() {
+public void attack() throws NotEnoughActionsException {
 	Character e= this.getTarget();
 	if (this.adjacent(e)){
 	if (this instanceof Hero) {
@@ -88,7 +90,7 @@ public void attack() {
 	h.setActionsAvailable(a);
 	if (a<0){
 		h.setActionsAvailable(0);
-		return;
+		throw new NotEnoughActionsException("Not enough Action points available");
 	}
 }
 	e.defend(this);

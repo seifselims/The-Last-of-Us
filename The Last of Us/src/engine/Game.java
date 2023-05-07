@@ -135,17 +135,16 @@ public static boolean checkGameOver() {
 public static void endTurn() {
 	for(int a=0;a<map.length;a++) {
 		for(int b=0;b<map[a].length;b++) {
-			if(zombies.get(a).adjacent(heroes.get(b))) {
+			if(zombies.get(a).adjacent(availableHeroes.get(b))) {
 				zombies.get(a).attack();
-			if(heroes.get(b).getActionsAvailable()!=heroes.get(b).getMaxActions())
-				heroes.get(b).setActionsAvailable(heroes.get(b).getMaxActions());
+			if(availableHeroes.get(b).getActionsAvailable()!=availableHeroes.get(b).getMaxActions())
+				heroes.get(b).setActionsAvailable(availableHeroes.get(b).getMaxActions());
 		}
-			if(map[a][b] instanceof CharacterCell && ((CharacterCell) map[a][b]).getCharacter() instanceof Hero && heroes.get(a).adjacent(heroes.get(b)))
-				Cell.setVisible(true);		
-			if(heroes.get(b).isSpecialAction()==false)
-				heroes.get(b).setSpecialAction(true);
-			if(heroes.get(b).getTarget() == null)
-				heroes.get(b).setTarget(zombies.get(a));;
+			if(map[a][b] instanceof CharacterCell && ((CharacterCell) map[a][b]).getCharacter() instanceof Hero && availableHeroes.get(a).adjacent(availableHeroes.get(b)))
+				Cell.setVisiblity(true);		
+			availableHeroes.get(b).setSpecialAction(false);
+			if(availableHeroes.get(b).getTarget() == null)
+				availableHeroes.get(b).setTarget(zombies.get(a));;
 		}
 			}
 	Zombie zombie=new Zombie();

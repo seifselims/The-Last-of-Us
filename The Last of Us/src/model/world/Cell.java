@@ -12,4 +12,5 @@ public boolean isVisible() {
 public Cell() {
 	isVisible = false;
 }
+
 }

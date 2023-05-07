@@ -3,6 +3,9 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 import engine.Game;
+import exceptions.GameActionException;
+import exceptions.InvalidTargetException;
+import exceptions.NoAvailableResourcesException;
 import model.collectibles.Collectible;
 import model.collectibles.Supply;
 import model.collectibles.Vaccine;
@@ -49,94 +52,78 @@ public Hero(String name, int maxHp, int attackDmg, int maxActions ) {
 
 	}
 
-public void move (Direction d)  {
-		Point b=this.getLocation();
+public void move  (Direction d)  {
+	if(this.getActionsAvailable()>0)	{
+	Point b=this.getLocation();
+	this.setVisiblity(true);
 		switch(d) {
 		case UP:
-			if((b.y>=0&&b.y<15)) {
-				b.y+=1;
+			if((b.x>=0&&b.x<15)) {
+				b.x+=1;
 				this.setNewLoc(b);
 			}	
 		break;
 		case DOWN:
-			if((b.y>0&&b.y<=15)) {
-				b.y-=1; 
+			if((b.x>0&&b.x<=14)) {
+				b.x-=1; 
 			this.setNewLoc(b);
 			}
 		break;
 		case RIGHT:
-			if((b.x>0&&b.x<=15)) {
-			b.x-=1;
+			if((b.y>0&&b.y<=14)) {
+			b.y-=1;
 			this.setNewLoc(b);
 			}
 		break;
 		case LEFT:
-			if((b.x>=0&&b.x<15)) {
-			b.x+=1;
+			if((b.y>=0&&b.y<15)) {
+			b.y+=1;
 			this.setNewLoc(b);
 			}
 		break;
 		}
-		if(this.adjacent(this)) {
-			Cell.setVisible(true);
-		}
+		
+			this.setVisiblity(true);
 	int a=this.getActionsAvailable()-1;
 	this.setActionsAvailable(a);
-	if (a<0){
-		this.setActionsAvailable(0);
-		return;
 		}
+	else
+		return;
 	}
 
 
-public void cure() {
-	Zombie z=new Zombie();
+public void cure() throws NoAvailableResourcesException, Exception {
+	if(this.getActionsAvailable()>0)	{
+	Zombie z=(Zombie)this.getTarget();
 	if(this.adjacent(z)) {
 		ArrayList<Vaccine> vaccine =this.getVaccineInventory();
 		if(vaccine!=null) {
 		((Collectible) vaccine).use(this);
 		int a= this.getActionsAvailable()-1;
 		this.setActionsAvailable(a);	
-		if (a<0){
-			this.setActionsAvailable(0);
-			return;
-			}	
 	}
-		}	
+		}
+}
+	else
+		return;
 }
 
-public void useSpecial() {
+public void useSpecial() throws NoAvailableResourcesException, Exception {
 		if(this instanceof Medic) {
-			if(getCurrentHp()<getMaxHp() && this.adjacent(this)) {
-				setSpecialAction(true);
-			    this.cure();
-			    int s= this.getSupplyInventory().size();
-			    s-=1;
-			    this.setCurrentHp(getMaxHp());
-			}
-			else {
-				setSpecialAction(false);
-			}
+			this.curehero();
+			this.cureself();
 		}
-		if(this instanceof Explorer) {
+		else if(this instanceof Explorer) {
 			if(this.getSupplyInventory()!=null ) {
 			setSpecialAction(true);
-			Cell.isVisible();
-			int s= this.getSupplyInventory().size();
-		    s-=1;
+			this.getSupplyInventory().remove(this.getSupplyInventory().size()-1);
+
 		    }
 		}
-		else {
-			setSpecialAction(false);
-		}
-		if(this instanceof Fighter) {
-			if(this.getSupplyInventory()!=null && this.getActionsAvailable()!=0) {
+		else if(this instanceof Fighter) {
+			if(this.getSupplyInventory()!=null) {
 			setSpecialAction(true);
-			this.attack();
-			int a=this.getActionsAvailable()+1;
-			this.setActionsAvailable(a);
-			int s= this.getSupplyInventory().size();
-		    s-=1;
+			this.attack2();
 		    }
 		}
 		else {
@@ -169,6 +156,106 @@ public void useSpecial() {
 		targetCell=newCell;	
 		b.setLocation(b);
 	}	
+	}
+	public void curehero() throws NoAvailableResourcesException, Exception {
+		if (this instanceof Medic) {
+		if (this.getTarget() instanceof Hero && this.adjacent(this.getTarget()) ) {
+			Hero x=(Hero) this.getTarget();
+			x.setCurrentHp(x.getMaxHp());
+		}
+	
+		ArrayList<Supply> supply =this.getSupplyInventory();
+		if(supply!=null) {
+		((Collectible) supply).use(this);
+		this.setSpecialAction(true);}
+		}
+		else
+			return;
+}
+	public void cureself() throws NoAvailableResourcesException, Exception {
+		if (this instanceof Medic) {
+			if(this.getCurrentHp()!=this.getMaxHp())
+				this.setCurrentHp(this.getMaxHp());
+			ArrayList<Supply> supply =this.getSupplyInventory();
+			if(supply!=null) {
+			((Collectible) supply).use(this);
+			this.setSpecialAction(true); }
+			}
+		else
+			return;
+	}
+	public void attack2() {
+		Zombie e= (Zombie)this.getTarget();
+		e.setCurrentHp(e.getCurrentHp()-this.getAttackDmg());
+		e.onCharacterDeath();
+		}
+
+	public void setVisiblity(boolean bool) {
+		Point l=this.getLocation();
+		Cell i=Game.map[l.x][l.y];
+		if(l.x==14 && l.y==0){
+			Game.map[l.x-1][l.y].setVisible(bool);
+			Game.map[l.x][l.y+1].setVisible(bool);
+			Game.map[l.x-1][l.y+1].setVisible(bool);
+		}
+		else if(l.x==14 && l.y==14) {
+			Game.map[l.x-1][l.y].setVisible(bool);
+			Game.map[l.x][l.y-1].setVisible(bool);
+			Game.map[l.x-1][l.y-1].setVisible(bool);
+		}
+		else if(l.x==0 && l.y==0) {
+			Game.map[l.x+1][l.y].setVisible(bool);
+			Game.map[l.x][l.y+1].setVisible(bool);
+			Game.map[l.x+1][l.y+1].setVisible(bool);
+		}
+		else if (l.x==0 && l.y==14) {
+			Game.map[l.x+1][l.y].setVisible(bool);
+			Game.map[l.x][l.y-1].setVisible(bool);
+			Game.map[l.x+1][l.y-1].setVisible(bool);
+		}
+		else if (l.x==0 && l.y>0 && l.y<14) {
+			Game.map[l.x+1][l.y].setVisible(bool);
+			Game.map[l.x][l.y-1].setVisible(bool);
+			Game.map[l.x][l.y+1].setVisible(bool);
+			Game.map[l.x+1][l.y-1].setVisible(bool);
+			Game.map[l.x+1][l.y+1].setVisible(bool);
+
+		}
+		else if (l.x==14 && l.y>0 && l.y<14) {
+			Game.map[l.x-1][l.y].setVisible(bool);
+			Game.map[l.x][l.y-1].setVisible(bool);
+			Game.map[l.x][l.y+1].setVisible(bool);
+			Game.map[l.x-1][l.y-1].setVisible(bool);
+			Game.map[l.x-1][l.y+1].setVisible(bool);
+
+		}
+		else if (l.y==0 && l.x>0 && l.x<14) {
+			Game.map[l.x-1][l.y].setVisible(bool);
+			Game.map[l.x+1][l.y].setVisible(bool);
+			Game.map[l.x][l.y+1].setVisible(bool);
+			Game.map[l.x-1][l.y+1].setVisible(bool);
+			Game.map[l.x+1][l.y+1].setVisible(bool);
+
+		}
+		else if (l.y==14 && l.x>0 && l.x<14) {
+			Game.map[l.x-1][l.y].setVisible(bool);
+			Game.map[l.x+1][l.y].setVisible(bool);
+			Game.map[l.x][l.y-1].setVisible(bool);
+			Game.map[l.x-1][l.y-1].setVisible(bool);
+			Game.map[l.x+1][l.y-1].setVisible(bool);
+
+		}
+		else {
+			Game.map[l.x][l.y+1].setVisible(bool);
+			Game.map[l.x][l.y-1].setVisible(bool);
+			Game.map[l.x+1][l.y].setVisible(bool);
+			Game.map[l.x+1][l.y+1].setVisible(bool);
+			Game.map[l.x+1][l.y-1].setVisible(bool);
+			Game.map[l.x-1][l.y].setVisible(bool);
+			Game.map[l.x-1][l.y-1].setVisible(bool);
+			Game.map[l.x-1][l.y+1].setVisible(bool);
+
+		}
 	}
 }
 
