@@ -22,7 +22,7 @@ default void pickUp(Hero h) {
 		if(h.getVaccineInventory().size()!=0)
 		h.getVaccineInventory().remove((Vaccine)this);
 		else
-			return;
+			throw new NoAvailableResourcesException("No resources available");
 	}
 }
 }
