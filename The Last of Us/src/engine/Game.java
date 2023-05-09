@@ -1,4 +1,5 @@
 package engine;
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -48,52 +49,88 @@ public static void loadHeroes(String filePath) throws Exception {
 		
 		br.close();
 		}
-/*public static void startGame(Hero h) {
+public static void startGame(Hero h) {
+	for(int i=0;i<15;i++) {
+		for(int j=0;j<15;j++) {
+			map[i][j]=new CharacterCell(null);
+		}
+	}
 	availableHeroes.remove(h);
 	heroes.add(h);
 	CharacterCell x=new CharacterCell((h));
+	boolean flag=true;
 	map [0][0]=x;
+	Point loc=new Point(0,0);
+	h.setLocation(loc);
+	h.setVisiblity(true);
+	x.setVisible(true);
 	for (int i=0;i<5;i++) {
 		CollectibleCell m=new CollectibleCell(new Vaccine());
 		CollectibleCell n=new CollectibleCell(new Supply());
 		int a = (int)(Math.random()*(14-0+1)+0);  
 		int b = (int)(Math.random()*(14-0+1)+0);  
-		while(map[a][b]!=null) {
+		do{
 			 a = (int)(Math.random()*(14-0+1)+0);  
-			 b = (int)(Math.random()*(14-0+1)+0);  
-		}
+			 b = (int)(Math.random()*(14-0+1)+0); 
+			 if(map[a][b] instanceof TrapCell || map[a][b] instanceof CollectibleCell)
+				 flag=true;
+			 else if (((CharacterCell)map[a][b]).getCharacter() != null) {
+				 flag=true;
+			 }
+			 else
+				 flag=false;
+		}while(flag);
 		map[a][b]=m;
-		a = (int)(Math.random()*(14-0+1)+0);  
-		b = (int)(Math.random()*(14-0+1)+0); 
-		while(map[a][b]!=null) {
-			 a = (int)(Math.random()*(14-0+1)+0);  
-			 b = (int)(Math.random()*(14-0+1)+0);  
-		}
+		do{a = (int)(Math.random()*(14-0+1)+0);  
+		 b = (int)(Math.random()*(14-0+1)+0); 
+			 if(map[a][b] instanceof TrapCell || map[a][b] instanceof CollectibleCell)
+				 flag=true;
+			 else if (((CharacterCell)map[a][b]).getCharacter() != null) {
+				 flag=true;
+			 }
+			 else
+				 flag=false;
+		}while(flag);
 		map[a][b]=n;
 	}
 	for (int i=0;i<5;i++) {
 		int a = (int)(Math.random()*(14-0+1)+0);  
 		int b = (int)(Math.random()*(14-0+1)+0); 
-		while(map[a][b]!=null) {
-			 a = (int)(Math.random()*(14-0+1)+0);  
-			 b = (int)(Math.random()*(14-0+1)+0);  
-		}
+		do{a = (int)(Math.random()*(14-0+1)+0);  
+		 b = (int)(Math.random()*(14-0+1)+0); 
+			 if(map[a][b] instanceof TrapCell || map[a][b] instanceof CollectibleCell)
+				 flag=true;
+			 else if (((CharacterCell)map[a][b]).getCharacter() != null) {
+				 flag=true;
+			 }
+			 else
+				 flag=false;
+		}while(flag);
 		map[a][b]=new TrapCell();
 	}
 	for(int i=0;i<10;i++) {
 		CharacterCell z=new CharacterCell(new Zombie());
 		int a = (int)(Math.random()*(14-0+1)+0);  
 		int b = (int)(Math.random()*(14-0+1)+0); 
-		while(map[a][b]!=null) {
-			 a = (int)(Math.random()*(14-0+1)+0);  
-			 b = (int)(Math.random()*(14-0+1)+0);  
-		}
+		do{a = (int)(Math.random()*(14-0+1)+0);  
+		 b = (int)(Math.random()*(14-0+1)+0); 
+			 if(map[a][b] instanceof TrapCell || map[a][b] instanceof CollectibleCell)
+				 flag=true;
+			 else if (((CharacterCell)map[a][b]).getCharacter() != null) {
+				 flag=true;
+			 }
+			 else
+				 flag=false;
+		}while(flag);
 		map[a][b]=z;
+		z.getCharacter().setLocation(new Point(a,b));
+		zombies.add((Zombie) z.getCharacter());
 	}
-}*/
+}
 public static boolean checkWin() {
 	boolean x=true;
 	boolean y=true;
+	int count=0;
 	for(int a=0;a<15;a++) {
 		for(int b=0;b<15;b++) {
 			if (map[a][b] instanceof CollectibleCell) {
@@ -102,7 +139,15 @@ public static boolean checkWin() {
 				if(n instanceof Vaccine)
 					x=false;
 			}
+			else if(map[a][b] instanceof CharacterCell) {
+				CharacterCell c=(CharacterCell)map[a][b];
+				if(c.getCharacter() instanceof Hero)
+					count++;
+			}
 		}
+	}
+	if (count<5) {
+		x=false;
 	}
 	for(int i=0;i<heroes.size();i++) {
 		if(heroes.get(i).getVaccineInventory().size()!=0)
@@ -116,6 +161,7 @@ public static boolean checkWin() {
 public static boolean checkGameOver() {
 	boolean x=true;
 	boolean y=true;
+	int count=0;
 	for(int a=0;a<15;a++) {
 		for(int b=0;b<15;b++) {
 			if (map[a][b] instanceof CollectibleCell) {
@@ -124,49 +170,84 @@ public static boolean checkGameOver() {
 				if(n instanceof Vaccine)
 					x=false;
 			}
+			else if(map[a][b] instanceof CharacterCell) {
+				CharacterCell c=(CharacterCell)map[a][b];
+				if(c.getCharacter() instanceof Hero)
+					count++;
+			}
 		}
+	}
+	if (count>0) {
+		y=false;
 	}
 	for(int i=0;i<heroes.size();i++) {
 		if(heroes.get(i).getVaccineInventory().size()!=0)
 			y=false;
 	}
-	if((availableHeroes.size()==0 &&  heroes.size()==0) && x==true && y==true ) {
+	for(int i=0;i<availableHeroes.size();i++) {
+		availableHeroes.get(i).onCharacterDeath();
+	}
+	if((availableHeroes.size()==0 &&  heroes.size()==0) || (x==true && y==true) ) {
 		return true;
 	}
 	return false;	
 }
 
-public static void endTurn() throws InvalidTargetException, GameActionException {
-	for(int a=0;a<map.length;a++) {
-		for(int b=0;b<map[a].length;b++) {
+public static void endTurn() throws InvalidTargetException, NotEnoughActionsException {
+	for(int a=0;a<15;a++) {
+		for(int b=0;b<15;b++) {
 			if(map[a][b] instanceof CharacterCell) {
 				CharacterCell c=(CharacterCell)map[a][b];
+				if(c.getCharacter()!=null)
+					c.getCharacter().setVisiblity(false);
 				if(c.getCharacter() instanceof Zombie) {
-					Zombie z=(Zombie)c.getCharacter();
-					c.getCharacter().attack();
-					c.getCharacter().setTarget(null);}
-			/*if(availableHeroes.get(b).getActionsAvailable()!=availableHeroes.get(b).getMaxActions())
-				heroes.get(b).setActionsAvailable(availableHeroes.get(b).getMaxActions());*/
-				else if(c.getCharacter() instanceof Hero){
-					CharacterCell h=(CharacterCell)map[a][b];
-					Hero h1=(Hero) h.getCharacter();
-					h1.setCurrentHp(h1.getMaxHp());
-					if(h1.getTarget()!=null)
-					h1.setTarget(null);
-					h1.setSpecialAction(false);
-					h1.setVisiblity(true);
+					for(int i=0;i<((CharacterCell)map[a][b]).getCharacter().adjcells().size();i++) {
+					if(((CharacterCell) map[a][b]).getCharacter().adjcells().get(i) instanceof CharacterCell) {
+						CharacterCell m=(CharacterCell) ((CharacterCell) map[a][b]).getCharacter().adjcells().get(i);
+						if(m.getCharacter() instanceof Hero){
+							c.getCharacter().setTarget(m.getCharacter());
+							c.getCharacter().attack();
+							break;
+						}
+						
+					}
+				}
 				}
 			}
 			}
-			
 			}
-
+	for(int i=0;i<zombies.size();i++) {
+		zombies.get(i).setTarget(null);
+	}
+	for(int i=0;i<heroes.size();i++) {
+		heroes.get(i).setCurrentHp(heroes.get(i).getMaxHp());
+		heroes.get(i).setTarget(null);
+		heroes.get(i).setSpecialAction(false);
+		Point x=heroes.get(i).getLocation();
+		((CharacterCell)map[x.x][x.y]).setVisible(true);
+		heroes.get(i).setVisiblity(true);
+		heroes.get(i).setActionsAvailable(heroes.get(i).getMaxActions());
+	}
+	
 	if( zombies.size()<10) {
 	Zombie zombie=new Zombie();
 	int random= (int) (Math.random()*(14-0+1)+0);
-	zombies.add(random,zombie);
+	int random1=(int)(Math.random()*(14-0+1)+0);
+	boolean flag=true;
+	do{
+		 random = (int)(Math.random()*(14-0+1)+0);  
+		 random1 = (int)(Math.random()*(14-0+1)+0); 
+		 if(map[random][random1] instanceof TrapCell || map[random][random1] instanceof CollectibleCell)
+			 flag=true;
+		 else if (((CharacterCell)map[random][random1]).getCharacter() != null) {
+			 flag=true;
+		 }
+		 else
+			 flag=false;
+	}while(flag);
+	((CharacterCell)map[random][random1]).setCharacter(zombie);
 	CharacterCell charzombie= new CharacterCell(zombie);
-	map[random][random]=charzombie;
+	map[random][random1]=charzombie;
 	zombies.add(zombie); }
 }
 

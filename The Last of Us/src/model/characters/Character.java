@@ -1,10 +1,14 @@
 package model.characters;
 import java.awt.Point;
+import java.util.ArrayList;
 
 import engine.Game;
 import exceptions.InvalidTargetException;
 import exceptions.NotEnoughActionsException;
+import model.world.Cell;
 import model.world.CharacterCell;
+import model.world.CollectibleCell;
+import model.world.TrapCell;
 
 abstract public class Character {
 private String name;
@@ -200,14 +204,7 @@ public void attack() throws NotEnoughActionsException, InvalidTargetException {
 	if (this.adjacent(e)){
 	if (this instanceof Hero && this.getTarget() instanceof Zombie) {
 	Hero h=(Hero) this;
-	if (h instanceof Fighter) {
-		h.attack2();
-		e.setTarget(h);
-		int y=this.getCurrentHp()-(e.getAttackDmg()/2);
-		this.setCurrentHp(y);
-		
-	}
-	else {
+
 	int a=h.getActionsAvailable()-1;
 	h.setActionsAvailable(a);
 	e.defend(this);
@@ -215,6 +212,9 @@ public void attack() throws NotEnoughActionsException, InvalidTargetException {
 		h.setActionsAvailable(0);
 		throw new NotEnoughActionsException("Not enough Action points available");
 	}
+	else {
+		e.defend(this);
+
 	}
 	}
 	else if(this instanceof Zombie && this.getTarget() instanceof Hero) {
@@ -228,39 +228,189 @@ public void attack() throws NotEnoughActionsException, InvalidTargetException {
 
 
 public void defend(Character c) throws NotEnoughActionsException {
-	if (this instanceof Hero) {
-		Hero h=(Hero) this;
-		int a=h.getActionsAvailable()-1;
-		h.setActionsAvailable(a);
-		if (a<0){
-			h.setActionsAvailable(0);
-			throw new NotEnoughActionsException("No action points available");
-		}
-	}
 	this.setTarget(c);
 	int x=this.getCurrentHp()-c.attackDmg;
 	this.setCurrentHp(x);
+	
 		int y=c.getCurrentHp()-(this.getAttackDmg()/2);
 		c.setCurrentHp(y);	
-		if (this.getCurrentHp()==0)
+		if (this.getCurrentHp()==0) {
 			this.onCharacterDeath();
+			return;
+		}
+		else if(c.getCurrentHp()==0) {
+			c.onCharacterDeath();
+			return;
+		}
+		
 }
 public void onCharacterDeath(){
 	if (this.getCurrentHp()==0) {
 		if (this instanceof Hero)
 		{
+			Game.map[this.getLocation().x][this.getLocation().y]=new CharacterCell(null);
 			Game.availableHeroes.remove(this);
 			this.setLocation(null);
 		}
 		else {
-			Game.zombies.remove(this);
+			Game.map[this.getLocation().x][this.getLocation().y]=new CharacterCell(null);
 			this.setLocation(null);
+			Game.zombies.remove(this);
 			Zombie z=new Zombie();
 			int random= (int) (Math.random()*(14-0+1)+0);
-			Game.zombies.add(random,z);
+			int random1=(int)(Math.random()*(14-0+1)+0);
+			boolean flag=true;
+			do{
+				 random = (int)(Math.random()*(14-0+1)+0);  
+				 random1 = (int)(Math.random()*(14-0+1)+0); 
+				 if(Game.map[random][random1] instanceof TrapCell || Game.map[random][random1] instanceof CollectibleCell)
+					 flag=true;
+				 else if (((CharacterCell)Game.map[random][random1]).getCharacter() != null) {
+					 flag=true;
+				 }
+				 else
+					 flag=false;
+			}while(flag);
+			((CharacterCell)Game.map[random][random1]).setCharacter(z);
 			CharacterCell charzombie= new CharacterCell(z);
-			Game.map[random][random]=charzombie;
+			Game.map[random][random1]=charzombie;
+			Game.zombies.add(z);
 		}
+	}
+}
+public ArrayList<Cell> adjcells() {
+		Point l=this.getLocation();
+		ArrayList<Cell>adjCells=new ArrayList<Cell>();
+		if(l.x==14 && l.y==0){
+			adjCells.add(Game.map[l.x-1][l.y]);
+			adjCells.add(Game.map[l.x][l.y+1]);
+			adjCells.add(Game.map[l.x-1][l.y+1]);
+		}
+		else if(l.x==14 && l.y==14) {
+			adjCells.add(Game.map[l.x-1][l.y]);
+			adjCells.add(Game.map[l.x][l.y-1]);
+			adjCells.add(Game.map[l.x-1][l.y-1]);
+		}
+		else if(l.x==0 && l.y==0) {
+			adjCells.add(Game.map[l.x+1][l.y]);
+			adjCells.add(Game.map[l.x][l.y+1]);
+			adjCells.add(Game.map[l.x+1][l.y+1]);
+		}
+		else if (l.x==0 && l.y==14) {
+			adjCells.add(Game.map[l.x+1][l.y]);
+			adjCells.add(Game.map[l.x][l.y-1]);
+			adjCells.add(Game.map[l.x+1][l.y-1]);
+		}
+		else if (l.x==0 && l.y>0 && l.y<14) {
+			adjCells.add(Game.map[l.x+1][l.y]);
+			adjCells.add(Game.map[l.x][l.y-1]);
+			adjCells.add(Game.map[l.x][l.y+1]);
+			adjCells.add(Game.map[l.x+1][l.y-1]);
+			adjCells.add(Game.map[l.x+1][l.y+1]);
+
+		}
+		else if (l.x==14 && l.y>0 && l.y<14) {
+			adjCells.add(Game.map[l.x-1][l.y]);
+			adjCells.add(Game.map[l.x][l.y-1]);
+			adjCells.add(Game.map[l.x][l.y+1]);
+			adjCells.add(Game.map[l.x-1][l.y-1]);
+			adjCells.add(Game.map[l.x-1][l.y+1]);
+
+		}
+		else if (l.y==0 && l.x>0 && l.x<14) {
+			adjCells.add(Game.map[l.x-1][l.y]);
+			adjCells.add(Game.map[l.x+1][l.y]);
+			adjCells.add(Game.map[l.x][l.y+1]);
+			adjCells.add(Game.map[l.x-1][l.y+1]);
+			adjCells.add(Game.map[l.x+1][l.y+1]);
+
+		}
+		else if (l.y==14 && l.x>0 && l.x<14) {
+			adjCells.add(Game.map[l.x-1][l.y]);
+			adjCells.add(Game.map[l.x+1][l.y]);
+			adjCells.add(Game.map[l.x][l.y-1]);
+			adjCells.add(Game.map[l.x-1][l.y-1]);
+			adjCells.add(Game.map[l.x+1][l.y-1]);
+
+		}
+		else {
+			adjCells.add(Game.map[l.x][l.y+1]);
+			adjCells.add(Game.map[l.x][l.y-1]);
+			adjCells.add(Game.map[l.x+1][l.y]);
+			adjCells.add(Game.map[l.x+1][l.y+1]);
+			adjCells.add(Game.map[l.x+1][l.y-1]);
+			adjCells.add(Game.map[l.x-1][l.y]);
+			adjCells.add(Game.map[l.x-1][l.y-1]);
+			adjCells.add(Game.map[l.x-1][l.y+1]);
+
+		}
+	
+return adjCells;
+}
+public void setVisiblity(boolean bool) {
+	Point l=this.getLocation();
+	if(l.x==14 && l.y==0){
+		Game.map[l.x-1][l.y].setVisible(bool);
+		Game.map[l.x][l.y+1].setVisible(bool);
+		Game.map[l.x-1][l.y+1].setVisible(bool);
+	}
+	else if(l.x==14 && l.y==14) {
+		Game.map[l.x-1][l.y].setVisible(bool);
+		Game.map[l.x][l.y-1].setVisible(bool);
+		Game.map[l.x-1][l.y-1].setVisible(bool);
+	}
+	else if(l.x==0 && l.y==0) {
+		Game.map[l.x+1][l.y].setVisible(bool);
+		Game.map[l.x][l.y+1].setVisible(bool);
+		Game.map[l.x+1][l.y+1].setVisible(bool);
+	}
+	else if (l.x==0 && l.y==14) {
+		Game.map[l.x+1][l.y].setVisible(bool);
+		Game.map[l.x][l.y-1].setVisible(bool);
+		Game.map[l.x+1][l.y-1].setVisible(bool);
+	}
+	else if (l.x==0 && l.y>0 && l.y<14) {
+		Game.map[l.x+1][l.y].setVisible(bool);
+		Game.map[l.x][l.y-1].setVisible(bool);
+		Game.map[l.x][l.y+1].setVisible(bool);
+		Game.map[l.x+1][l.y-1].setVisible(bool);
+		Game.map[l.x+1][l.y+1].setVisible(bool);
+
+	}
+	else if (l.x==14 && l.y>0 && l.y<14) {
+		Game.map[l.x-1][l.y].setVisible(bool);
+		Game.map[l.x][l.y-1].setVisible(bool);
+		Game.map[l.x][l.y+1].setVisible(bool);
+		Game.map[l.x-1][l.y-1].setVisible(bool);
+		Game.map[l.x-1][l.y+1].setVisible(bool);
+
+	}
+	else if (l.y==0 && l.x>0 && l.x<14) {
+		Game.map[l.x-1][l.y].setVisible(bool);
+		Game.map[l.x+1][l.y].setVisible(bool);
+		Game.map[l.x][l.y+1].setVisible(bool);
+		Game.map[l.x-1][l.y+1].setVisible(bool);
+		Game.map[l.x+1][l.y+1].setVisible(bool);
+
+	}
+	else if (l.y==14 && l.x>0 && l.x<14) {
+		Game.map[l.x-1][l.y].setVisible(bool);
+		Game.map[l.x+1][l.y].setVisible(bool);
+		Game.map[l.x][l.y-1].setVisible(bool);
+		Game.map[l.x-1][l.y-1].setVisible(bool);
+		Game.map[l.x+1][l.y-1].setVisible(bool);
+
+	}
+	else {
+		Game.map[l.x][l.y+1].setVisible(bool);
+		Game.map[l.x][l.y-1].setVisible(bool);
+		Game.map[l.x+1][l.y].setVisible(bool);
+		Game.map[l.x+1][l.y+1].setVisible(bool);
+		Game.map[l.x+1][l.y-1].setVisible(bool);
+		Game.map[l.x-1][l.y].setVisible(bool);
+		Game.map[l.x-1][l.y-1].setVisible(bool);
+		Game.map[l.x-1][l.y+1].setVisible(bool);
+
 	}
 }
 }
