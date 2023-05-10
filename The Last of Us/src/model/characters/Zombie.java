@@ -11,17 +11,16 @@ public Zombie() {
 public void attack() throws NotEnoughActionsException, InvalidTargetException {
 	
 	if(this.getTarget() instanceof Hero) {
-		Character e= this.getTarget();
 		if(this.adjacent(this.getTarget()))
-		e.defend(this);
-		else
+			super.attack();
+			else
 			throw new InvalidTargetException("Target is not adjacent");
 	}
 
 
 	
 }
-public void defend(Character c) throws NotEnoughActionsException {
+public void defend(Character c)  {
 this.setTarget(c);
 int x=this.getCurrentHp()-c.getAttackDmg();
 this.setCurrentHp(x);

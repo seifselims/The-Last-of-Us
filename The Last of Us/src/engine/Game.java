@@ -180,43 +180,48 @@ public static boolean checkGameOver() {
 	}
 	for(int i=0;i<heroes.size();i++) {
 		if(heroes.get(i).getVaccineInventory().size()!=0)
-			y=false;
-		heroes.get(i).onCharacterDeath();
+			return false;
+			heroes.get(i).onCharacterDeath();
 	}
 	for(int i=0;i<availableHeroes.size();i++) {
 		if(availableHeroes.get(i).getVaccineInventory().size()!=0)
-			y=false;
-		availableHeroes.get(i).onCharacterDeath();
+			return false;
+			availableHeroes.get(i).onCharacterDeath();
 	}
-	if(availableHeroes.size()==0  || y==true || x==true)  {
+	if(heroes.size()==0  || y==true || x==true)  {
 		return true;
 	}
 	return false;	
 }
 
 public static void endTurn() throws InvalidTargetException, NotEnoughActionsException {
-	for(int a=0;a<15;a++) {
-		for(int b=0;b<15;b++) {
-			if(map[a][b] instanceof CharacterCell) {
-				CharacterCell c=(CharacterCell)map[a][b];
-				if(c.getCharacter()!=null)
-					c.getCharacter().setVisiblity(false);
-				if(c.getCharacter() instanceof Zombie) {
-					for(int i=0;i<((CharacterCell)map[a][b]).getCharacter().adjcells().size();i++) {
-					if(((CharacterCell) map[a][b]).getCharacter().adjcells().get(i) instanceof CharacterCell) {
-						CharacterCell m=(CharacterCell) ((CharacterCell) map[a][b]).getCharacter().adjcells().get(i);
-						if(m.getCharacter() instanceof Hero){
-							c.getCharacter().setTarget(m.getCharacter());
-							c.getCharacter().attack();
-							break;
-						}
+	
+	for(int i=0;i<zombies.size();i++) {				
+		if(zombies.get(i).getTarget() instanceof Hero) 
+			zombies.get(i).attack();
+			else {
+		
+		ArrayList<Point> p=zombies.get(i).adjcells();			
+		for(int j=0;j<p.size();j++) {
+			if((map[p.get(j).x][p.get(j).y] instanceof CharacterCell)) {
+					CharacterCell m=((CharacterCell)(map[p.get(j).x][p.get(j).y]));
+					if(m.getCharacter() instanceof Hero) {
+						zombies.get(i).setTarget(m.getCharacter());
+						zombies.get(i).attack();
+						break;
+					}
+					}
 						
 					}
+		}
 				}
-				}
-			}
-			}
-			}
+				
+			
+			
+			
+			for(int a=0;a<15;a++) {
+				for(int b=0;b<15;b++) {
+							map[a][b].setVisible(false);}}
 	for(int i=0;i<zombies.size();i++) {
 		zombies.get(i).setTarget(null);
 	}
@@ -251,9 +256,10 @@ public static void endTurn() throws InvalidTargetException, NotEnoughActionsExce
 	map[random][random1]=charzombie;
 	zombies.add(zombie); }
 }
+			
+
+
 
 }
-
-
 
 

@@ -3,7 +3,6 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 import engine.Game;
-import exceptions.GameActionException;
 import exceptions.InvalidTargetException;
 import exceptions.MovementException;
 import exceptions.NoAvailableResourcesException;
@@ -65,7 +64,6 @@ public void move  (Direction d) throws MovementException, NotEnoughActionsExcept
 				Point x=new Point(b.x+1,b.y);
 				b.x+=1;
 				this.setNewLoc(x);
-				this.setVisiblity(true);
 			}
 			else throw new MovementException("Out of borders");
 		break;
@@ -73,11 +71,6 @@ public void move  (Direction d) throws MovementException, NotEnoughActionsExcept
 			if((b.x>0&&b.x<=14)) {
 				Point x=new Point(b.x-1,b.y);
 			this.setNewLoc(x);
-			if(this.getCurrentHp()==0)
-				this.onCharacterDeath();
-			else
-			this.setVisiblity(true);
-
 			}
 			else throw new MovementException("Out of borders");
 
@@ -86,7 +79,6 @@ public void move  (Direction d) throws MovementException, NotEnoughActionsExcept
 			if((b.y>0&&b.y<14)) {
 			Point x=new Point(b.x,b.y+1);
 			this.setNewLoc(x);
-			this.setVisiblity(true);
 
 			}
 			else throw new MovementException("Out of borders");
@@ -96,21 +88,20 @@ public void move  (Direction d) throws MovementException, NotEnoughActionsExcept
 			if((b.y>0&&b.y<15)) {
 				Point x=new Point(b.x,b.y-1);
 			this.setNewLoc(x);
-			this.setVisiblity(true);
 
 			}
 			else throw new MovementException("Out of borders");
 		break;
 		}
 		
-			this.setVisiblity(false);
+			this.setVisiblity(true);
 	int a=this.getActionsAvailable()-1;
 	this.setActionsAvailable(a);
 		}
 	}
 
 
-public void cure() throws NoAvailableResourcesException, Exception {
+public void cure() throws NoAvailableResourcesException, InvalidTargetException, NotEnoughActionsException, MovementException  {
 	
 	if (this.getTarget()==null || !(this.getTarget() instanceof Zombie))
 		throw new InvalidTargetException("You should cure a Zombie");
@@ -122,15 +113,10 @@ public void cure() throws NoAvailableResourcesException, Exception {
 				if(this.getVaccineInventory().size()==0)
 				throw new NoAvailableResourcesException("No Vaccine available.");
 				else {
-				use(this);
 				int a= this.getActionsAvailable()-1;
 				this.setActionsAvailable(a);
-				Point l=this.getTarget().getLocation();
-				Game.zombies.remove(this.getTarget());
-				Game.map[l.x][l.y]=null;
-				Hero h=Game.availableHeroes.get((int)(Math.random()*(Game.availableHeroes.size()-1-0+1)+0));
-				h.setNewLoc(l);
-				this.setTarget(null);
+				(this.getVaccineInventory().get(0)).use(this);
+				
 			}
 				}
 			else
@@ -141,39 +127,54 @@ public void cure() throws NoAvailableResourcesException, Exception {
 
 public abstract void useSpecial() throws NoAvailableResourcesException, Exception;
 
-	private void setNewLoc(Point b) throws MovementException {
+	public void setNewLoc(Point b) throws MovementException {
 		Cell targetCell=Game.map[b.x][b.y];
+		int x=this.getLocation().x;
+		int y=this.getLocation().y;
 			if(targetCell instanceof TrapCell) {
 					this.setCurrentHp(this.getCurrentHp()-((TrapCell) targetCell).getTrapDamage());
-					Game.map[this.getLocation().x][this.getLocation().y] = new CharacterCell(null);
 					this.setLocation(b);
 					CharacterCell newCell=new CharacterCell(this);
 					targetCell.setVisible(true);
 					Game.map[this.getLocation().x][this.getLocation().y] = newCell;
 					targetCell=newCell;
+					Game.map[x][y] = new CharacterCell(null);
 					if(this.getCurrentHp()==0) {
 						this.onCharacterDeath();
 						}
+					else {
+						this.setVisiblity(true);
+						Game.map[b.x][b.y].setVisible(true);
+					}
 				
 	}
 	else if(targetCell instanceof CollectibleCell) {
-		pickUp(this);
-		Game.map[this.getLocation().x][this.getLocation().y] = new CharacterCell(null);
+		((CollectibleCell) targetCell).getCollectible().pickUp(this);
 		this.setLocation(b);
 		CharacterCell newCell=new CharacterCell(this);
 		targetCell.setVisible(true);
 		Game.map[this.getLocation().x][this.getLocation().y] = newCell;
 		targetCell=newCell;	
+		Game.map[x][y] = new CharacterCell(null);
+		this.setVisiblity(true);
+		Game.map[b.x][b.y].setVisible(true);
 
 	}
 	else if(targetCell instanceof CharacterCell) {
 		if (((CharacterCell) targetCell).getCharacter()==null) {
-			Game.map[this.getLocation().x][this.getLocation().y] = new CharacterCell(null);
 			this.setLocation(b);
 			CharacterCell newCell=new CharacterCell(this);
 			targetCell.setVisible(true);
 			Game.map[this.getLocation().x][this.getLocation().y] = newCell;
 			targetCell=newCell;	
+			Game.map[x][y] = new CharacterCell(null);
+			if(this.getCurrentHp()==0) {
+				this.onCharacterDeath();
+				}
+			else {
+				this.setVisiblity(true);
+				Game.map[b.x][b.y].setVisible(true);
+			}
 		}
 		else	
 		throw new MovementException("Cell is occupied");
@@ -182,8 +183,26 @@ public abstract void useSpecial() throws NoAvailableResourcesException, Exceptio
 	}
 	
 	public void attack2() throws NotEnoughActionsException {
+		if (this.specialAction==true){
 		Zombie e= (Zombie)this.getTarget();
-		e.setCurrentHp(e.getCurrentHp()-this.getAttackDmg());
+		e.setCurrentHp(e.getCurrentHp()-this.getAttackDmg());}
+		else {
+			if (this.actionsAvailable==0) {
+				throw new NotEnoughActionsException("No action points");
+			}
+			else{
+				this.setActionsAvailable(this.getActionsAvailable()-1);
+				this.getTarget().setCurrentHp(this.getTarget().getCurrentHp()-this.getAttackDmg());
+				if(this.getTarget().getCurrentHp()==0) {
+					this.getTarget().onCharacterDeath();
+					
+				}
+				else
+					this.getTarget().defend(this);
+			}
+				
+		}
+			
 	}
 	public void attack() throws NotEnoughActionsException, InvalidTargetException {
 		if (this.getTarget()==null || (this.getTarget() instanceof Hero) )
@@ -193,9 +212,7 @@ public abstract void useSpecial() throws NoAvailableResourcesException, Exceptio
 		if (this.getTarget() instanceof Zombie) {
 			if (this instanceof Fighter) {
 				this.attack2();
-				e.setTarget(this);
-				int y=this.getCurrentHp()-(e.getAttackDmg()/2);
-				this.setCurrentHp(y);
+				
 			}
 			else {
 		int a=this.getActionsAvailable()-1;
@@ -204,9 +221,10 @@ public abstract void useSpecial() throws NoAvailableResourcesException, Exceptio
 			this.setActionsAvailable(0);
 			throw new NotEnoughActionsException("Not enough Action points available");
 		}
-		else
-			e.defend(this);
+		else{
+			this.setActionsAvailable(a);
 		
+		}
 		} }
 	}
 		else throw new InvalidTargetException("Target cell is not adjacent");
@@ -219,11 +237,11 @@ public abstract void useSpecial() throws NoAvailableResourcesException, Exceptio
 			c.setCurrentHp(y);	
 			if (this.getCurrentHp()==0) {
 				this.onCharacterDeath();
-				return;
+				
 			}
 			if(c.getCurrentHp()==0) {
 				c.onCharacterDeath();
-				return;
+				
 			}
 			
 			

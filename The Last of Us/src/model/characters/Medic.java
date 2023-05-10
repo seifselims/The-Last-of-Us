@@ -1,10 +1,10 @@
 package model.characters;
 
-import java.util.ArrayList;
 
 import model.collectibles.Collectible;
 import model.collectibles.Supply;
 import exceptions.InvalidTargetException;
+import exceptions.MovementException;
 import exceptions.NoAvailableResourcesException;
 import exceptions.NotEnoughActionsException;
 
@@ -14,57 +14,41 @@ public class Medic extends Hero {
 		super(name, maxHp, attackDmg, maxActions);
 
 }
-	public void useSpecial() throws NoAvailableResourcesException, NotEnoughActionsException, InvalidTargetException  {
+	public void useSpecial() throws NoAvailableResourcesException, NotEnoughActionsException, InvalidTargetException, MovementException  {
+		if(this.isSpecialAction()==false) {
 		if(this.getActionsAvailable() == 0)
 		{
 			throw new NotEnoughActionsException();
 		}
 		else {	
-		if(this.getSupplyInventory().size()==0) {
-			setSpecialAction(false);
-			throw new NoAvailableResourcesException("No available resources");
-		}
+			if(this.getSupplyInventory().size()!=0) {
+				((Collectible) this.getSupplyInventory()).use(this);
+				this.setSpecialAction(true);
+				this.setActionsAvailable(this.getActionsAvailable()-1);
+				this.heal();}
 			else {
-				setSpecialAction(true);
-				this.getSupplyInventory().remove(this.getSupplyInventory().size()-1);
-			    
-			this.curehero();
-			this.cureself();
+				throw new NoAvailableResourcesException ("Cannot supply");
+			}
 			}
 		}
+		else {
+			throw new NotEnoughActionsException();
+		}
 	}
-	public void curehero() throws InvalidTargetException, NoAvailableResourcesException {
-		if (this.getTarget() instanceof Zombie ) 
-			throw new InvalidTargetException("Cannot heal a zombie");
+	
+	public void heal() throws InvalidTargetException, NoAvailableResourcesException, MovementException {
+		if (this.getTarget() instanceof Zombie || this.getTarget()==null) 
+			throw new InvalidTargetException("must heal a Hero or self");
 			else {
 		if (this.adjacent(this.getTarget())){
 			this.getTarget().setCurrentHp(this.getTarget().getMaxHp());		
 	
-			ArrayList<Supply> supply =this.getSupplyInventory();
-			if(supply.size()!=0) {
-				((Collectible) supply).use(this);
-				this.setSpecialAction(true);}
-			else {
-				throw new NoAvailableResourcesException ("Cannot supply");
-			}
 			}
 		else
 			throw new InvalidTargetException ("Target is not adjacent");
 			}
 	}
 
-	public void cureself() throws NoAvailableResourcesException {
-		if (this instanceof Medic) {
-			if(this.getCurrentHp()!=this.getMaxHp())
-				this.setCurrentHp(this.getMaxHp());
-			ArrayList<Supply> supply =this.getSupplyInventory();
-			if(supply!=null) {
-			((Collectible) supply).use(this);
-			this.setSpecialAction(true); }
-			}
-		else
-			return;
-	}
 	@Override
 	public void pickUp(Hero h) {
 		// TODO Auto-generated method stub
