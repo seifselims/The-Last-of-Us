@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import model.collectibles.Collectible;
 import model.collectibles.Supply;
+import exceptions.InvalidTargetException;
 import exceptions.NoAvailableResourcesException;
 import exceptions.NotEnoughActionsException;
 
@@ -13,7 +14,7 @@ public class Medic extends Hero {
 		super(name, maxHp, attackDmg, maxActions);
 
 }
-	public void useSpecial() throws NoAvailableResourcesException, NotEnoughActionsException  {
+	public void useSpecial() throws NoAvailableResourcesException, NotEnoughActionsException, InvalidTargetException  {
 		if(this.getActionsAvailable() == 0)
 		{
 			throw new NotEnoughActionsException();
@@ -32,21 +33,26 @@ public class Medic extends Hero {
 			}
 		}
 	}
-	public void curehero() throws NoAvailableResourcesException {
-		if (this instanceof Medic) {
-		if (this.getTarget() instanceof Hero && this.adjacent(this.getTarget()) ) {
-			Hero x=(Hero) this.getTarget();
-			x.setCurrentHp(x.getMaxHp());
-		}
+	public void curehero() throws InvalidTargetException, NoAvailableResourcesException {
+		if (this.getTarget() instanceof Zombie ) 
+			throw new InvalidTargetException("Cannot heal a zombie");
+			else {
+		if (this.adjacent(this.getTarget())){
+			this.getTarget().setCurrentHp(this.getTarget().getMaxHp());		
 	
-		ArrayList<Supply> supply =this.getSupplyInventory();
-		if(supply!=null) {
-		((Collectible) supply).use(this);
-		this.setSpecialAction(true);}
-		}
+			ArrayList<Supply> supply =this.getSupplyInventory();
+			if(supply.size()!=0) {
+				((Collectible) supply).use(this);
+				this.setSpecialAction(true);}
+			else {
+				throw new NoAvailableResourcesException ("Cannot supply");
+			}
+			}
 		else
-			return;
-}
+			throw new InvalidTargetException ("Target is not adjacent");
+			}
+	}
+
 	public void cureself() throws NoAvailableResourcesException {
 		if (this instanceof Medic) {
 			if(this.getCurrentHp()!=this.getMaxHp())

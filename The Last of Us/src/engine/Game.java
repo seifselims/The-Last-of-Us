@@ -135,9 +135,8 @@ public static boolean checkWin() {
 		for(int b=0;b<15;b++) {
 			if (map[a][b] instanceof CollectibleCell) {
 				CollectibleCell m=(CollectibleCell)map[a][b];
-				Collectible n=(Collectible)m;
-				if(n instanceof Vaccine)
-					x=false;
+				if(m.getCollectible() instanceof Vaccine)
+					y=false;
 			}
 			else if(map[a][b] instanceof CharacterCell) {
 				CharacterCell c=(CharacterCell)map[a][b];
@@ -166,8 +165,7 @@ public static boolean checkGameOver() {
 		for(int b=0;b<15;b++) {
 			if (map[a][b] instanceof CollectibleCell) {
 				CollectibleCell m=(CollectibleCell)map[a][b];
-				Collectible n=(Collectible)m;
-				if(n instanceof Vaccine)
+				if(m.getCollectible() instanceof Vaccine)
 					x=false;
 			}
 			else if(map[a][b] instanceof CharacterCell) {
@@ -183,8 +181,11 @@ public static boolean checkGameOver() {
 	for(int i=0;i<heroes.size();i++) {
 		if(heroes.get(i).getVaccineInventory().size()!=0)
 			y=false;
+		heroes.get(i).onCharacterDeath();
 	}
 	for(int i=0;i<availableHeroes.size();i++) {
+		if(availableHeroes.get(i).getVaccineInventory().size()!=0)
+			y=false;
 		availableHeroes.get(i).onCharacterDeath();
 	}
 	if((availableHeroes.size()==0 &&  heroes.size()==0) || (x==true && y==true) ) {

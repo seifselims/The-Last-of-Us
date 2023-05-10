@@ -59,7 +59,6 @@ public void move  (Direction d) throws MovementException, NotEnoughActionsExcept
 		throw new NotEnoughActionsException("No enough action points available");
 	else {
 	Point b=this.getLocation();
-	this.setVisiblity(true);
 		switch(d) {
 		case UP:
 			if((b.x>=0&&b.x<14)) {
@@ -85,7 +84,7 @@ public void move  (Direction d) throws MovementException, NotEnoughActionsExcept
 		break;
 		case RIGHT:
 			if((b.y>0&&b.y<14)) {
-				Point x=new Point(b.x,b.y+1);
+			Point x=new Point(b.x,b.y+1);
 			this.setNewLoc(x);
 			this.setVisiblity(true);
 
@@ -123,7 +122,7 @@ public void cure() throws NoAvailableResourcesException, Exception {
 				if(this.getVaccineInventory().size()==0)
 				throw new NoAvailableResourcesException("No Vaccine available.");
 				else {
-				((Collectible) this.getVaccineInventory()).use(this);
+				use(this);
 				int a= this.getActionsAvailable()-1;
 				this.setActionsAvailable(a);
 				Point l=this.getTarget().getLocation();
@@ -156,7 +155,7 @@ public abstract void useSpecial() throws NoAvailableResourcesException, Exceptio
 				
 	}
 	else if(targetCell instanceof CollectibleCell) {
-		((Collectible) targetCell).pickUp(this);
+		pickUp(this);
 		Game.map[this.getLocation().x][this.getLocation().y] = new CharacterCell(null);
 		CharacterCell newCell=new CharacterCell(this);
 		targetCell=newCell;	
@@ -214,6 +213,10 @@ public abstract void useSpecial() throws NoAvailableResourcesException, Exceptio
 			c.setCurrentHp(y);	
 			if (this.getCurrentHp()==0) {
 				this.onCharacterDeath();
+				return;
+			}
+			if(c.getCurrentHp()==0) {
+				c.onCharacterDeath();
 				return;
 			}
 			

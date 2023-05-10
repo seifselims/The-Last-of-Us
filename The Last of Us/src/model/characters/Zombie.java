@@ -9,17 +9,17 @@ public Zombie() {
 	super("Zombie "+ ++ZOMBIES_COUNT,40,10);
 }
 public void attack() throws NotEnoughActionsException, InvalidTargetException {
-	if (this.getTarget()==null)
-		throw new InvalidTargetException("Character does not have a target");
-	Character e= this.getTarget();
 	
 	if(this.getTarget() instanceof Hero) {
+		Character e= this.getTarget();
+		if(this.adjacent(this.getTarget()))
 		e.defend(this);
+		else
+			throw new InvalidTargetException("Target is not adjacent");
 	}
 
 
 	
-	else throw new InvalidTargetException("Target cell is not adjacent");
 }
 public void defend(Character c) throws NotEnoughActionsException {
 this.setTarget(c);
@@ -29,7 +29,10 @@ if (this.getCurrentHp()==0)
 	this.onCharacterDeath();
 else {
 	int y=c.getCurrentHp()-(this.getAttackDmg()/2);
-	c.setCurrentHp(y);	
+	c.setCurrentHp(y);
+	if (c.getCurrentHp()==0){
+		c.onCharacterDeath();
+	}
 }
 }
 }

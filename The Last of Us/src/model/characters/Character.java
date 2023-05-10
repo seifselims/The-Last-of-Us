@@ -253,6 +253,7 @@ public void onCharacterDeath(){
 			this.setLocation(null);
 		}
 		else {
+			Game.map[this.getLocation().x][this.getLocation().y]=null;
 			Game.map[this.getLocation().x][this.getLocation().y]=new CharacterCell(null);
 			this.setLocation(null);
 			Game.zombies.remove(this);
