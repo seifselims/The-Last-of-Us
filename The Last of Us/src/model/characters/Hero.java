@@ -205,6 +205,7 @@ public abstract void useSpecial() throws NoAvailableResourcesException, Exceptio
 			
 	}
 	public void attack() throws NotEnoughActionsException, InvalidTargetException {
+		
 		if (this.getTarget()==null || (this.getTarget() instanceof Hero) )
 			throw new InvalidTargetException("Character does not have a Zombie target");
 		Character e= this.getTarget();

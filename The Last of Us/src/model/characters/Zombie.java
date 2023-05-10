@@ -9,8 +9,9 @@ public Zombie() {
 	super("Zombie "+ ++ZOMBIES_COUNT,40,10);
 }
 public void attack() throws NotEnoughActionsException, InvalidTargetException {
-	
-	if(this.getTarget() instanceof Hero) {
+if(this.getTarget()==null)
+	throw new InvalidTargetException("Target is null");
+else if(this.getTarget() instanceof Hero) {
 		if(this.adjacent(this.getTarget()))
 			super.attack();
 			else
@@ -22,11 +23,13 @@ public void attack() throws NotEnoughActionsException, InvalidTargetException {
 }
 public void defend(Character c)  {
 this.setTarget(c);
-int x=this.getCurrentHp()-c.getAttackDmg();
-this.setCurrentHp(x);
 if (this.getCurrentHp()==0)
 	this.onCharacterDeath();
-else {
+
+//if (this.getCurrentHp()==0)
+//	this.onCharacterDeath();
+else {int x=this.getCurrentHp()-c.getAttackDmg();
+this.setCurrentHp(x);
 	int y=c.getCurrentHp()-(this.getAttackDmg()/2);
 	c.setCurrentHp(y);
 	if (c.getCurrentHp()==0){

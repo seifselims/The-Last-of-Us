@@ -27,7 +27,8 @@ public class Medic extends Hero {
 				this.setActionsAvailable(this.getActionsAvailable()-1);
 				this.heal();}
 			else {
-				throw new NoAvailableResourcesException ("Cannot supply");
+//				throw new NoAvailableResourcesException ("Cannot supply");
+				throw new InvalidTargetException("must heal a Hero or self");
 			}
 			}
 		}
@@ -37,12 +38,12 @@ public class Medic extends Hero {
 	}
 	
 	public void heal() throws InvalidTargetException, NoAvailableResourcesException, MovementException {
-		if (this.getTarget() instanceof Zombie || this.getTarget()==null) 
+		if ((this.getTarget() instanceof Zombie) || this.getTarget()==null) 
 			throw new InvalidTargetException("must heal a Hero or self");
 			else {
 		if (this.adjacent(this.getTarget())){
 			this.getTarget().setCurrentHp(this.getTarget().getMaxHp());		
-	
+			
 			}
 		else
 			throw new InvalidTargetException ("Target is not adjacent");

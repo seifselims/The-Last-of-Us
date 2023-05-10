@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import exceptions.GameActionException;
 import exceptions.InvalidTargetException;
 import exceptions.NotEnoughActionsException;
+import model.characters.Character;
 import model.characters.Explorer;
 import model.characters.Fighter;
 import model.characters.Hero;
@@ -197,28 +198,29 @@ public static boolean checkGameOver() {
 public static void endTurn() throws InvalidTargetException, NotEnoughActionsException {
 	
 	for(int i=0;i<zombies.size();i++) {				
-		if(zombies.get(i).getTarget() instanceof Hero) 
-			zombies.get(i).attack();
-			else {
+//		if(zombies.get(i).getTarget() instanceof Hero) 
+//			zombies.get(i).attack();
+//			else {
 		
-		ArrayList<Point> p=zombies.get(i).adjcells();			
+		ArrayList<Point> p=zombies.get(i).adjcells();		
+		System.out.println("zombie pt"+zombies.get(i).getLocation() );
+		System.out.println("adjacent "+p);
 		for(int j=0;j<p.size();j++) {
 			if((map[p.get(j).x][p.get(j).y] instanceof CharacterCell)) {
 					CharacterCell m=((CharacterCell)(map[p.get(j).x][p.get(j).y]));
+					
 					if(m.getCharacter() instanceof Hero) {
-						zombies.get(i).setTarget(m.getCharacter());
-						zombies.get(i).attack();
-						break;
-					}
-					}
+						
+							zombies.get(i).setTarget(m.getCharacter());
+							zombies.get(i).attack();
+							}
+//						break;
+//			
+//			}
 						
 					}
 		}
-				}
-				
-			
-			
-			
+				}		
 			for(int a=0;a<15;a++) {
 				for(int b=0;b<15;b++) {
 							map[a][b].setVisible(false);}}
