@@ -11,11 +11,7 @@ public class Fighter extends Hero {
 		
 	}
 public void useSpecial() throws NoAvailableResourcesException, NotEnoughActionsException {
-	if(this.getActionsAvailable() == 0)
-	{
-		throw new NotEnoughActionsException();
-	}
-	else {
+	
 	if(this.getSupplyInventory().size()==0 ) {
 	setSpecialAction(false);
 	throw new NoAvailableResourcesException("No available resources");	}
@@ -25,7 +21,7 @@ public void useSpecial() throws NoAvailableResourcesException, NotEnoughActionsE
 	this.attack2();
 	}
 }
-}
+
 @Override
 public void pickUp(Hero h) {
 	// TODO Auto-generated method stub

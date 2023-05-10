@@ -146,9 +146,11 @@ public abstract void useSpecial() throws NoAvailableResourcesException, Exceptio
 			if(targetCell instanceof TrapCell) {
 					this.setCurrentHp(this.getCurrentHp()-((TrapCell) targetCell).getTrapDamage());
 					Game.map[this.getLocation().x][this.getLocation().y] = new CharacterCell(null);
-					CharacterCell newCell=new CharacterCell(this);
-					targetCell=newCell;
 					this.setLocation(b);
+					CharacterCell newCell=new CharacterCell(this);
+					targetCell.setVisible(true);
+					Game.map[this.getLocation().x][this.getLocation().y] = newCell;
+					targetCell=newCell;
 					if(this.getCurrentHp()==0) {
 						this.onCharacterDeath();
 						}
@@ -157,16 +159,21 @@ public abstract void useSpecial() throws NoAvailableResourcesException, Exceptio
 	else if(targetCell instanceof CollectibleCell) {
 		pickUp(this);
 		Game.map[this.getLocation().x][this.getLocation().y] = new CharacterCell(null);
-		CharacterCell newCell=new CharacterCell(this);
-		targetCell=newCell;	
 		this.setLocation(b);
+		CharacterCell newCell=new CharacterCell(this);
+		targetCell.setVisible(true);
+		Game.map[this.getLocation().x][this.getLocation().y] = newCell;
+		targetCell=newCell;	
+
 	}
 	else if(targetCell instanceof CharacterCell) {
 		if (((CharacterCell) targetCell).getCharacter()==null) {
 			Game.map[this.getLocation().x][this.getLocation().y] = new CharacterCell(null);
-			CharacterCell newCell=new CharacterCell(this);
-			targetCell=newCell;	
 			this.setLocation(b);
+			CharacterCell newCell=new CharacterCell(this);
+			targetCell.setVisible(true);
+			Game.map[this.getLocation().x][this.getLocation().y] = newCell;
+			targetCell=newCell;	
 		}
 		else	
 		throw new MovementException("Cell is occupied");
@@ -208,7 +215,6 @@ public abstract void useSpecial() throws NoAvailableResourcesException, Exceptio
 		this.setTarget(c);
 		int x=this.getCurrentHp()-c.getAttackDmg();
 		this.setCurrentHp(x);
-		
 			int y=c.getCurrentHp()-(this.getAttackDmg()/2);
 			c.setCurrentHp(y);	
 			if (this.getCurrentHp()==0) {
@@ -223,6 +229,7 @@ public abstract void useSpecial() throws NoAvailableResourcesException, Exceptio
 			
 			
 	}
+	
 
 
 }

@@ -204,7 +204,6 @@ public void attack() throws NotEnoughActionsException, InvalidTargetException {
 	if (this.adjacent(e)){
 	if (this instanceof Hero && this.getTarget() instanceof Zombie) {
 	Hero h=(Hero) this;
-
 	int a=h.getActionsAvailable()-1;
 	h.setActionsAvailable(a);
 	e.defend(this);
@@ -350,6 +349,7 @@ return adjCells;
 }
 public void setVisiblity(boolean bool) {
 	Point l=this.getLocation();
+	
 	if(l.x==14 && l.y==0){
 		Game.map[l.x-1][l.y].setVisible(bool);
 		Game.map[l.x][l.y+1].setVisible(bool);
@@ -413,5 +413,7 @@ public void setVisiblity(boolean bool) {
 		Game.map[l.x-1][l.y+1].setVisible(bool);
 
 	}
+
 }
+
 }

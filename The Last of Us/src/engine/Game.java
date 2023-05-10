@@ -188,7 +188,7 @@ public static boolean checkGameOver() {
 			y=false;
 		availableHeroes.get(i).onCharacterDeath();
 	}
-	if((availableHeroes.size()==0 &&  heroes.size()==0) || (x==true && y==true) ) {
+	if(availableHeroes.size()==0  || y==true || x==true)  {
 		return true;
 	}
 	return false;	
