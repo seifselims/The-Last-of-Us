@@ -183,7 +183,7 @@ public void attack() throws NotEnoughActionsException, InvalidTargetException {
 	this.target.defend(this);
 }
 
-public void defend(Character c) throws NotEnoughActionsException {
+public void defend(Character c)  {
 	this.setTarget(c);
 	int x=this.getCurrentHp()-c.attackDmg;
 	this.setCurrentHp(x);

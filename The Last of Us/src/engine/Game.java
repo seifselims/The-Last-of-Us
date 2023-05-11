@@ -197,45 +197,21 @@ public static boolean checkGameOver() {
 
 public static void endTurn() throws InvalidTargetException, NotEnoughActionsException {
 	
-	for(int i=0;i<zombies.size();i++) {				
-//		if(zombies.get(i).getTarget() instanceof Hero) 
-//			zombies.get(i).attack();
-//			else {
-		
-		ArrayList<Point> p=zombies.get(i).adjcells();		
-		System.out.println("zombie pt"+zombies.get(i).getLocation() );
-		System.out.println("adjacent "+p);
-		for(int j=0;j<p.size();j++) {
-			if((map[p.get(j).x][p.get(j).y] instanceof CharacterCell)) {
-					CharacterCell m=((CharacterCell)(map[p.get(j).x][p.get(j).y]));
-					
-					if(m.getCharacter() instanceof Hero) {
-						
-							zombies.get(i).setTarget(m.getCharacter());
-							zombies.get(i).attack();
-							}
-//						break;
-//			
-//			}
-						
-					}
-		}
-				}		
+	
 			for(int a=0;a<15;a++) {
 				for(int b=0;b<15;b++) {
 							map[a][b].setVisible(false);}}
-	for(int i=0;i<zombies.size();i++) {
-		zombies.get(i).setTarget(null);
-	}
+			
+	
 	for(int i=0;i<heroes.size();i++) {
 		heroes.get(i).setCurrentHp(heroes.get(i).getMaxHp());
 		heroes.get(i).setTarget(null);
 		heroes.get(i).setSpecialAction(false);
-		Point x=heroes.get(i).getLocation();
-		((CharacterCell)map[x.x][x.y]).setVisible(true);
 		heroes.get(i).setVisiblity(true);
 		heroes.get(i).setActionsAvailable(heroes.get(i).getMaxActions());
 	}
+	for(int i=0;i<zombies.size();i++) {				
+		zombies.get(i).attack();}	
 	
 	if( zombies.size()<10) {
 	Zombie zombie=new Zombie();
@@ -256,7 +232,11 @@ public static void endTurn() throws InvalidTargetException, NotEnoughActionsExce
 	((CharacterCell)map[random][random1]).setCharacter(zombie);
 	CharacterCell charzombie= new CharacterCell(zombie);
 	map[random][random1]=charzombie;
-	zombies.add(zombie); }
+	zombies.add(zombie);
+}
+	for(int i=0;i<zombies.size();i++) {
+		zombies.get(i).setTarget(null);
+	}
 }
 			
 

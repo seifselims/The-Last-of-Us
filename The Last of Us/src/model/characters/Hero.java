@@ -57,12 +57,13 @@ public void move  (Direction d) throws MovementException, NotEnoughActionsExcept
 	if(this.getActionsAvailable()==0)
 		throw new NotEnoughActionsException("No enough action points available");
 	else {
+		int a=this.getActionsAvailable()-1;
+		this.setActionsAvailable(a);
 	Point b=this.getLocation();
 		switch(d) {
 		case UP:
 			if((b.x>=0&&b.x<14)) {
 				Point x=new Point(b.x+1,b.y);
-				b.x+=1;
 				this.setNewLoc(x);
 			}
 			else throw new MovementException("Out of borders");
@@ -76,7 +77,7 @@ public void move  (Direction d) throws MovementException, NotEnoughActionsExcept
 
 		break;
 		case RIGHT:
-			if((b.y>0&&b.y<14)) {
+			if((b.y>=0&&b.y<14)) {
 			Point x=new Point(b.x,b.y+1);
 			this.setNewLoc(x);
 
@@ -85,7 +86,7 @@ public void move  (Direction d) throws MovementException, NotEnoughActionsExcept
 
 		break;
 		case LEFT:
-			if((b.y>0&&b.y<15)) {
+			if((b.y>0&&b.y<=14)) {
 				Point x=new Point(b.x,b.y-1);
 			this.setNewLoc(x);
 
@@ -94,9 +95,7 @@ public void move  (Direction d) throws MovementException, NotEnoughActionsExcept
 		break;
 		}
 		
-			this.setVisiblity(true);
-	int a=this.getActionsAvailable()-1;
-	this.setActionsAvailable(a);
+//			this.setVisiblity(true);
 		}
 	}
 
@@ -136,15 +135,15 @@ public abstract void useSpecial() throws NoAvailableResourcesException, Exceptio
 					this.setLocation(b);
 					CharacterCell newCell=new CharacterCell(this);
 					targetCell.setVisible(true);
-					Game.map[this.getLocation().x][this.getLocation().y] = newCell;
+					Game.map[b.x][b.y] = newCell;
 					targetCell=newCell;
 					Game.map[x][y] = new CharacterCell(null);
 					if(this.getCurrentHp()==0) {
 						this.onCharacterDeath();
+						this.setVisiblity(false);
 						}
 					else {
 						this.setVisiblity(true);
-						Game.map[b.x][b.y].setVisible(true);
 					}
 				
 	}
@@ -153,11 +152,10 @@ public abstract void useSpecial() throws NoAvailableResourcesException, Exceptio
 		this.setLocation(b);
 		CharacterCell newCell=new CharacterCell(this);
 		targetCell.setVisible(true);
-		Game.map[this.getLocation().x][this.getLocation().y] = newCell;
+		Game.map[b.x][b.y] = newCell;
 		targetCell=newCell;	
 		Game.map[x][y] = new CharacterCell(null);
 		this.setVisiblity(true);
-		Game.map[b.x][b.y].setVisible(true);
 
 	}
 	else if(targetCell instanceof CharacterCell) {
@@ -165,15 +163,15 @@ public abstract void useSpecial() throws NoAvailableResourcesException, Exceptio
 			this.setLocation(b);
 			CharacterCell newCell=new CharacterCell(this);
 			targetCell.setVisible(true);
-			Game.map[this.getLocation().x][this.getLocation().y] = newCell;
+			Game.map[b.x][b.y] = newCell;
 			targetCell=newCell;	
 			Game.map[x][y] = new CharacterCell(null);
 			if(this.getCurrentHp()==0) {
 				this.onCharacterDeath();
+				this.setVisiblity(false);
 				}
 			else {
 				this.setVisiblity(true);
-				Game.map[b.x][b.y].setVisible(true);
 			}
 		}
 		else	
@@ -192,13 +190,7 @@ public abstract void useSpecial() throws NoAvailableResourcesException, Exceptio
 			}
 			else{
 				this.setActionsAvailable(this.getActionsAvailable()-1);
-				this.getTarget().setCurrentHp(this.getTarget().getCurrentHp()-this.getAttackDmg());
-				if(this.getTarget().getCurrentHp()==0) {
-					this.getTarget().onCharacterDeath();
-					
-				}
-				else
-					this.getTarget().defend(this);
+				this.getTarget().defend(this);
 			}
 				
 		}
@@ -222,15 +214,15 @@ public abstract void useSpecial() throws NoAvailableResourcesException, Exceptio
 			this.setActionsAvailable(0);
 			throw new NotEnoughActionsException("Not enough Action points available");
 		}
-		else{
-			this.setActionsAvailable(a);
+		else
+			super.attack();
+				
 		
-		}
 		} }
 	}
 		else throw new InvalidTargetException("Target cell is not adjacent");
 }
-	public void defend(Character c) throws NotEnoughActionsException {
+	public void defend(Character c)  {
 		this.setTarget(c);
 		int x=this.getCurrentHp()-c.getAttackDmg();
 		this.setCurrentHp(x);
@@ -249,7 +241,15 @@ public abstract void useSpecial() throws NoAvailableResourcesException, Exceptio
 			
 	}
 	
-
+/*	public static void main (String [] args) throws MovementException, NotEnoughActionsException {
+		Fighter x=new Fighter("Batman",100,22,294);
+		x.setLocation(new Point(12,12));
+		Game.map[14][0]=new CharacterCell(x);
+		x.move(Direction.UP);
+		System.out.prinln(x.getLocation());
+		
+		
+	}*/
 
 }
 

@@ -20,6 +20,8 @@ public class Medic extends Hero {
 		{
 			throw new NotEnoughActionsException();
 		}
+		if(!(this.getTarget() instanceof Hero)) 
+				throw new InvalidTargetException("must heal a Hero or self");
 		else {	
 			if(this.getSupplyInventory().size()!=0) {
 				((Collectible) this.getSupplyInventory()).use(this);
@@ -27,8 +29,7 @@ public class Medic extends Hero {
 				this.setActionsAvailable(this.getActionsAvailable()-1);
 				this.heal();}
 			else {
-//				throw new NoAvailableResourcesException ("Cannot supply");
-				throw new InvalidTargetException("must heal a Hero or self");
+				throw new NoAvailableResourcesException ("Cannot supply");
 			}
 			}
 		}
