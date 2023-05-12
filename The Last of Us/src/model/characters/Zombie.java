@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import model.world.CharacterCell;
 
-import com.sun.javafx.scene.paint.GradientUtils.Point;
-
 import engine.Game;
 import exceptions.InvalidTargetException;
 import exceptions.NotEnoughActionsException;

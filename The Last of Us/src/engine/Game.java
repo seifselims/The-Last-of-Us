@@ -128,6 +128,9 @@ CharacterCell z=new CharacterCell(z1);
 		z.getCharacter().setLocation(new Point(a,b));
 		zombies.add(z1);
 	}
+for(int i=0;i<heroes.size();i++ ) {
+	heroes.get(i).setVisiblity(true);
+}
 }
 public static boolean checkWin() {
 	boolean x=true;
@@ -238,6 +241,9 @@ public static void endTurn() throws InvalidTargetException, NotEnoughActionsExce
 
 	for(int i=0;i<zombies.size();i++) {
 		zombies.get(i).setTarget(null);
+	}
+	for(int i=0;i<heroes.size();i++ ) {
+		heroes.get(i).setVisiblity(true);
 	}
 }
 			
