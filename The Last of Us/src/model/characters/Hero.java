@@ -53,51 +53,51 @@ public Hero(String name, int maxHp, int attackDmg, int maxActions ) {
 
 	}
 
-public void move  (Direction d) throws MovementException, NotEnoughActionsException  {
-	if(this.getActionsAvailable()==0)
-		throw new NotEnoughActionsException("No enough action points available");
-	else {
-		int a=this.getActionsAvailable()-1;
-		this.setActionsAvailable(a);
-	Point b=this.getLocation();
-		switch(d) {
-		case UP:
-			if((b.x>=0&&b.x<14)) {
-				Point x=new Point(b.x+1,b.y);
-				this.setNewLoc(x);
-			}
-			else throw new MovementException("Out of borders");
-		break;
-		case DOWN:
-			if((b.x>0&&b.x<=14)) {
-				Point x=new Point(b.x-1,b.y);
-			this.setNewLoc(x);
-			}
-			else throw new MovementException("Out of borders");
-
-		break;
-		case RIGHT:
-			if((b.y>=0&&b.y<14)) {
-			Point x=new Point(b.x,b.y+1);
-			this.setNewLoc(x);
-
-			}
-			else throw new MovementException("Out of borders");
-
-		break;
-		case LEFT:
-			if((b.y>0&&b.y<=14)) {
-				Point x=new Point(b.x,b.y-1);
-			this.setNewLoc(x);
-
-			}
-			else throw new MovementException("Out of borders");
-		break;
-		}
-		
-//			this.setVisiblity(true);
-		}
-	}
+//public void move  (Direction d) throws MovementException, NotEnoughActionsException  {
+//	if(this.getActionsAvailable()==0)
+//		throw new NotEnoughActionsException("No enough action points available");
+//	else {
+//		int a=this.getActionsAvailable()-1;
+//		this.setActionsAvailable(a);
+//	Point b=this.getLocation();
+//		switch(d) {
+//		case UP:
+//			if((b.x>=0&&b.x<14)) {
+//				Point x=new Point(b.x+1,b.y);
+//				this.setNewLoc(x);
+//			}
+//			else throw new MovementException("Out of borders");
+//		break;
+//		case DOWN:
+//			if((b.x>0&&b.x<=14)) {
+//				Point x=new Point(b.x-1,b.y);
+//			this.setNewLoc(x);
+//			}
+//			else throw new MovementException("Out of borders");
+//
+//		break;
+//		case RIGHT:
+//			if((b.y>=0&&b.y<14)) {
+//			Point x=new Point(b.x,b.y+1);
+//			this.setNewLoc(x);
+//
+//			}
+//			else throw new MovementException("Out of borders");
+//
+//		break;
+//		case LEFT:
+//			if((b.y>0&&b.y<=14)) {
+//				Point x=new Point(b.x,b.y-1);
+//			this.setNewLoc(x);
+//
+//			}
+//			else throw new MovementException("Out of borders");
+//		break;
+//		}
+//		
+////			this.setVisiblity(true);
+//		}
+//	}
 
 
 public void cure() throws NoAvailableResourcesException, InvalidTargetException, NotEnoughActionsException, MovementException  {
@@ -180,6 +180,249 @@ public abstract void useSpecial() throws NoAvailableResourcesException, Exceptio
 	
 	}
 	
+public void move(Direction d) throws NotEnoughActionsException, MovementException {
+	if(this.getActionsAvailable()==0)
+		throw new NotEnoughActionsException ("Cannot move without Action Pts");
+	else {
+		this.setActionsAvailable(this.getActionsAvailable()-1);
+		switch(d) {
+			case UP:
+				if(this.getLocation().x>=0 && this.getLocation().x<14) {
+					Point y=new Point(this.getLocation().x+1,this.getLocation().y);
+					if(Game.map[y.x][y.y] instanceof TrapCell) {
+						this.setCurrentHp(this.getCurrentHp()-((TrapCell)Game.map[y.x][y.y]).getTrapDamage());
+						if (this.getCurrentHp()==0) {
+							this.setVisiblity(false);
+							Game.map[this.getLocation().x][this.getLocation().y]=new CharacterCell(null);
+							((CharacterCell)Game.map[this.getLocation().x][this.getLocation().y]).setCharacter(null);
+							Game.map[y.x][y.y]=new CharacterCell(null);
+							this.setLocation(null);
+							this.onCharacterDeath();
+							
+						return;}
+						Game.map[this.getLocation().x][this.getLocation().y]=new CharacterCell(null);
+						((CharacterCell)Game.map[this.getLocation().x][this.getLocation().y]).setCharacter(null);
+						this.setLocation(y);
+						Game.map[y.x][y.y]=new CharacterCell(this);
+						((CharacterCell)Game.map[y.x][y.y]).setCharacter(this);
+						if(this.getCurrentHp()==0) {
+							
+							this.setVisiblity(false);
+						}
+						else
+							this.setVisiblity(true);
+						
+					}
+					else if(Game.map[y.x][y.y] instanceof CollectibleCell) {
+						((CollectibleCell)Game.map[y.x][y.y]).getCollectible().pickUp(this);
+						Game.map[this.getLocation().x][this.getLocation().y]=new CharacterCell(null);
+						((CharacterCell)Game.map[this.getLocation().x][this.getLocation().y]).setCharacter(null);
+						this.setLocation(y);
+						Game.map[y.x][y.y]=new CharacterCell(this);
+						((CharacterCell)Game.map[y.x][y.y]).setCharacter(this);
+						this.setVisiblity(true);
+					}
+					else if(Game.map[y.x][y.y] instanceof CharacterCell) {
+						if(((CharacterCell)Game.map[y.x][y.y]).getCharacter()!=null) {
+							throw new MovementException("Cannot move to an occupied cell");
+						}
+						else {
+							Game.map[this.getLocation().x][this.getLocation().y]=new CharacterCell(null);
+							((CharacterCell)Game.map[this.getLocation().x][this.getLocation().y]).setCharacter(null);
+							this.setLocation(y);
+							Game.map[y.x][y.y]=new CharacterCell(this);
+							((CharacterCell)Game.map[y.x][y.y]).setCharacter(this);
+							if(this.getCurrentHp()==0) {
+								
+								this.setVisiblity(false);
+							}
+							else
+								this.setVisiblity(true);
+						}
+					}
+				}
+				else throw new MovementException("Cannot move out of map");
+				break;
+			case DOWN:
+				if(this.getLocation().x>0 && this.getLocation().x<=14) {
+					Point y=new Point(this.getLocation().x-1,this.getLocation().y);
+					if(Game.map[y.x][y.y] instanceof TrapCell) {
+						this.setCurrentHp(this.getCurrentHp()-((TrapCell)Game.map[y.x][y.y]).getTrapDamage());
+						if (this.getCurrentHp()==0) {
+							this.setVisiblity(false);
+							Game.map[this.getLocation().x][this.getLocation().y]=new CharacterCell(null);
+							((CharacterCell)Game.map[this.getLocation().x][this.getLocation().y]).setCharacter(null);
+							Game.map[y.x][y.y]=new CharacterCell(null);
+							this.setLocation(null);
+							this.onCharacterDeath();
+							
+							return;
+							}
+						Game.map[this.getLocation().x][this.getLocation().y]=new CharacterCell(null);
+						((CharacterCell)Game.map[this.getLocation().x][this.getLocation().y]).setCharacter(null);
+						this.setLocation(y);
+						Game.map[y.x][y.y]=new CharacterCell(this);
+						((CharacterCell)Game.map[y.x][y.y]).setCharacter(this);
+						if(this.getCurrentHp()==0) {
+							
+							this.setVisiblity(false);
+						}
+						else
+							this.setVisiblity(true);
+						
+					}
+					else if(Game.map[y.x][y.y] instanceof CollectibleCell) {
+						((CollectibleCell)Game.map[y.x][y.y]).getCollectible().pickUp(this);
+						Game.map[this.getLocation().x][this.getLocation().y]=new CharacterCell(null);
+						((CharacterCell)Game.map[this.getLocation().x][this.getLocation().y]).setCharacter(null);
+						this.setLocation(y);
+						Game.map[y.x][y.y]=new CharacterCell(this);
+						((CharacterCell)Game.map[y.x][y.y]).setCharacter(this);
+						this.setVisiblity(true);
+					}
+					else if(Game.map[y.x][y.y] instanceof CharacterCell) {
+						if(((CharacterCell)Game.map[y.x][y.y]).getCharacter()!=null) {
+							throw new MovementException("Cannot move to an occupied cell");
+						}
+						else {
+							Game.map[this.getLocation().x][this.getLocation().y]=new CharacterCell(null);
+							((CharacterCell)Game.map[this.getLocation().x][this.getLocation().y]).setCharacter(null);
+							this.setLocation(y);
+							Game.map[y.x][y.y]=new CharacterCell(this);
+							((CharacterCell)Game.map[y.x][y.y]).setCharacter(this);
+							if(this.getCurrentHp()==0) {
+								
+								this.setVisiblity(false);
+							}
+							else
+								this.setVisiblity(true);
+						}
+					}
+				}
+				else throw new MovementException("Cannot move out of map");
+				break;
+			case RIGHT:
+				if(this.getLocation().y>=0 && this.getLocation().y<14) {
+					Point y=new Point(this.getLocation().x,this.getLocation().y+1);
+					if(Game.map[y.x][y.y] instanceof TrapCell) {
+						this.setCurrentHp(this.getCurrentHp()-((TrapCell)Game.map[y.x][y.y]).getTrapDamage());
+						if (this.getCurrentHp()==0) {
+							this.setVisiblity(false);
+							Game.map[this.getLocation().x][this.getLocation().y]=new CharacterCell(null);
+							((CharacterCell)Game.map[this.getLocation().x][this.getLocation().y]).setCharacter(null);
+							Game.map[y.x][y.y]=new CharacterCell(null);
+							this.setLocation(null);
+							this.onCharacterDeath();
+
+							
+							return;}
+						Game.map[this.getLocation().x][this.getLocation().y]=new CharacterCell(null);
+						((CharacterCell)Game.map[this.getLocation().x][this.getLocation().y]).setCharacter(null);
+						this.setLocation(y);
+						Game.map[y.x][y.y]=new CharacterCell(this);
+						((CharacterCell)Game.map[y.x][y.y]).setCharacter(this);
+						if(this.getCurrentHp()==0) {
+							
+							this.setVisiblity(false);
+						}
+						else
+							this.setVisiblity(true);
+						
+					}
+					else if(Game.map[y.x][y.y] instanceof CollectibleCell) {
+						((CollectibleCell)Game.map[y.x][y.y]).getCollectible().pickUp(this);
+						Game.map[this.getLocation().x][this.getLocation().y]=new CharacterCell(null);
+						((CharacterCell)Game.map[this.getLocation().x][this.getLocation().y]).setCharacter(null);
+						this.setLocation(y);
+						Game.map[y.x][y.y]=new CharacterCell(this);
+						((CharacterCell)Game.map[y.x][y.y]).setCharacter(this);
+						this.setVisiblity(true);
+					}
+					else if(Game.map[y.x][y.y] instanceof CharacterCell) {
+						if(((CharacterCell)Game.map[y.x][y.y]).getCharacter()!=null) {
+							throw new MovementException("Cannot move to an occupied cell");
+						}
+						else {
+							Game.map[this.getLocation().x][this.getLocation().y]=new CharacterCell(null);
+							((CharacterCell)Game.map[this.getLocation().x][this.getLocation().y]).setCharacter(null);
+							this.setLocation(y);
+							Game.map[y.x][y.y]=new CharacterCell(this);
+							((CharacterCell)Game.map[y.x][y.y]).setCharacter(this);
+							if(this.getCurrentHp()==0) {
+								
+								this.setVisiblity(false);
+							}
+							else
+								this.setVisiblity(true);
+						}
+					}
+				}
+				else throw new MovementException("Cannot move out of map");
+				break;
+			case LEFT:
+				if(this.getLocation().y>0 && this.getLocation().y<=14) {
+					Point y=new Point(this.getLocation().x,this.getLocation().y-1);
+					if(Game.map[y.x][y.y] instanceof TrapCell) {
+						this.setCurrentHp(this.getCurrentHp()-((TrapCell)Game.map[y.x][y.y]).getTrapDamage());
+						if (this.getCurrentHp()==0) {
+							this.setVisiblity(false);
+							Game.map[this.getLocation().x][this.getLocation().y]=new CharacterCell(null);
+							((CharacterCell)Game.map[this.getLocation().x][this.getLocation().y]).setCharacter(null);
+							Game.map[y.x][y.y]=new CharacterCell(null);
+							this.setLocation(null);
+							this.onCharacterDeath();
+							
+							return;}
+						Game.map[this.getLocation().x][this.getLocation().y]=new CharacterCell(null);
+						((CharacterCell)Game.map[this.getLocation().x][this.getLocation().y]).setCharacter(null);
+						this.setLocation(y);
+						Game.map[y.x][y.y]=new CharacterCell(this);
+						((CharacterCell)Game.map[y.x][y.y]).setCharacter(this);
+						if(this.getCurrentHp()==0) {
+							
+							this.setVisiblity(false);
+						}
+						else
+							this.setVisiblity(true);
+						
+					}
+					else if(Game.map[y.x][y.y] instanceof CollectibleCell) {
+						((CollectibleCell)Game.map[y.x][y.y]).getCollectible().pickUp(this);
+						Game.map[this.getLocation().x][this.getLocation().y]=new CharacterCell(null);
+						((CharacterCell)Game.map[this.getLocation().x][this.getLocation().y]).setCharacter(null);
+						this.setLocation(y);
+						Game.map[y.x][y.y]=new CharacterCell(this);
+						((CharacterCell)Game.map[y.x][y.y]).setCharacter(this);
+						this.setVisiblity(true);
+					}
+					else if(Game.map[y.x][y.y] instanceof CharacterCell) {
+						if(((CharacterCell)Game.map[y.x][y.y]).getCharacter()!=null) {
+							throw new MovementException("Cannot move to an occupied cell");
+						}
+						else {
+							Game.map[this.getLocation().x][this.getLocation().y]=new CharacterCell(null);
+							((CharacterCell)Game.map[this.getLocation().x][this.getLocation().y]).setCharacter(null);
+							this.setLocation(y);
+							Game.map[y.x][y.y]=new CharacterCell(this);
+							((CharacterCell)Game.map[y.x][y.y]).setCharacter(this);
+							if(this.getCurrentHp()==0) {
+								
+								this.setVisiblity(false);
+							}
+							else
+								this.setVisiblity(true);
+						}
+					}
+				}
+				else throw new MovementException("Cannot move out of map");
+				break;
+				
+				
+				
+			
+		}
+	}
+}
 	public void attack2() throws NotEnoughActionsException {
 		if (this.specialAction==true){
 		Zombie e= (Zombie)this.getTarget();
