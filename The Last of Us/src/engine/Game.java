@@ -109,8 +109,9 @@ public static void startGame(Hero h) {
 		}while(flag);
 		map[a][b]=new TrapCell();
 	}
-	for(int i=0;i<10;i++) {
-		CharacterCell z=new CharacterCell(new Zombie());
+while(zombies.size()<10) {
+	Zombie z1=new Zombie();
+CharacterCell z=new CharacterCell(z1);
 		int a = (int)(Math.random()*(14-0+1)+0);  
 		int b = (int)(Math.random()*(14-0+1)+0); 
 		do{a = (int)(Math.random()*(14-0+1)+0);  
@@ -125,7 +126,7 @@ public static void startGame(Hero h) {
 		}while(flag);
 		map[a][b]=z;
 		z.getCharacter().setLocation(new Point(a,b));
-		zombies.add((Zombie) z.getCharacter());
+		zombies.add(z1);
 	}
 }
 public static boolean checkWin() {
@@ -213,7 +214,7 @@ public static void endTurn() throws InvalidTargetException, NotEnoughActionsExce
 	for(int i=0;i<zombies.size();i++) {				
 		zombies.get(i).attack();}	
 	
-	if( zombies.size()<10) {
+	
 	Zombie zombie=new Zombie();
 	int random= (int) (Math.random()*(14-0+1)+0);
 	int random1=(int)(Math.random()*(14-0+1)+0);
@@ -233,7 +234,8 @@ public static void endTurn() throws InvalidTargetException, NotEnoughActionsExce
 	CharacterCell charzombie= new CharacterCell(zombie);
 	map[random][random1]=charzombie;
 	zombies.add(zombie);
-}
+	zombie.setLocation(new Point(random,random1));
+
 	for(int i=0;i<zombies.size();i++) {
 		zombies.get(i).setTarget(null);
 	}

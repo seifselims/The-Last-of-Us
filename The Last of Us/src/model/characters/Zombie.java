@@ -16,27 +16,31 @@ public Zombie() {
 	super("Zombie "+ ++ZOMBIES_COUNT,40,10);
 }
 public void attack() throws NotEnoughActionsException, InvalidTargetException {
-if((this.getTarget() instanceof Zombie))
-	throw new InvalidTargetException("Target is not a hero");
-else if(this.getTarget() instanceof Hero) {
-//		if(!(this.adjacent(this.getTarget())))
-//			throw new InvalidTargetException("Target is not adjacent");
-//			else
-				super.attack();
-	}
-else if(this.getTarget()==null ) {
+//if((this.getTarget() instanceof Zombie))
+//	throw new InvalidTargetException("Target is not a hero");
+//else if(this.getTarget() instanceof Hero) {
+////		if(!(this.adjacent(this.getTarget())))
+////			throw new InvalidTargetException("Target is not adjacent");
+////			else
+//				super.attack();
+//	}
+//else if(this.getTarget()==null ) {
 	ArrayList<java.awt.Point> x=this.adjcells();
 	for(int i=0;i<x.size();i++) {
 		if(Game.map[x.get(i).x][x.get(i).y] instanceof CharacterCell) {
 			if(((CharacterCell)Game.map[x.get(i).x][x.get(i).y]).getCharacter() instanceof Hero) {
+				if(((CharacterCell)Game.map[x.get(i).x][x.get(i).y]).getCharacter() !=null) {
 				this.setTarget(((CharacterCell)Game.map[x.get(i).x][x.get(i).y]).getCharacter());
 				super.attack();
 				break;
 			}
+			}
 		}
 	}
+	if (!(this.getTarget() instanceof Hero))
+		return;
 }
-}
+//}
 //public void attackz() throws NotEnoughActionsException  {
 //	if(this.getTarget()==null || (!(this.getTarget() instanceof Hero))) {
 //		java.awt.Point o=this.adjcells().get(0);

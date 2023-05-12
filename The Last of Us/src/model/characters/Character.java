@@ -204,12 +204,11 @@ public void onCharacterDeath(){
 		{
 			Game.map[this.getLocation().x][this.getLocation().y]=new CharacterCell(null);
 			Game.heroes.remove(this);
-			this.setLocation(null);
+//			this;
 		}
 		else {
-			Game.map[this.getLocation().x][this.getLocation().y]=null;
 			Game.map[this.getLocation().x][this.getLocation().y]=new CharacterCell(null);
-			this.setLocation(null);
+//			this;
 			Game.zombies.remove(this);
 			Zombie z=new Zombie();
 			int random= (int) (Math.random()*(14-0+1)+0);
@@ -228,6 +227,7 @@ public void onCharacterDeath(){
 			}while(flag);
 			((CharacterCell)Game.map[random][random1]).setCharacter(z);
 			CharacterCell charzombie= new CharacterCell(z);
+			z.setLocation(new Point(random,random1));
 			Game.map[random][random1]=charzombie;
 			Game.zombies.add(z);
 		}
