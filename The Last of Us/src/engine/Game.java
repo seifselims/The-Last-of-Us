@@ -269,7 +269,7 @@ public static void endTurn() throws InvalidTargetException, NotEnoughActionsExce
 
 public void start(Stage primaryStage) {
 	try {
-		Image image=new Image("C:\\Users\\walid\\Desktop\\TLOU.jpg");
+		Image image=new Image("file:TLOU.jpg");
 		ImageView imageview=new ImageView(image);
 		
 //		BorderPane root = new BorderPane();
