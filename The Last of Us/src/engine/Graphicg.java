@@ -21,8 +21,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import model.characters.Fighter;
 import model.characters.Hero;
 import model.collectibles.Vaccine;
+import model.world.CharacterCell;
 import model.world.CollectibleCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -50,6 +52,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.StackPane;
 public class Graphicg  extends Application  {
 	public void start(Stage primaryStage) {
 		try {
@@ -68,6 +71,7 @@ public class Graphicg  extends Application  {
 			ImageView imageview3=new ImageView(image2);
 			ImageView imageview4=new ImageView(image4);
 			ImageView imageview5=new ImageView(image5);
+			ImageView imageview6=new ImageView("file:thumb-1920-532407.jpg");
 			
 			
 
@@ -81,6 +85,8 @@ public class Graphicg  extends Application  {
 			imageview4.setFitHeight(Screen.getPrimary().getVisualBounds().getHeight());
 			imageview5.setFitWidth(Screen.getPrimary().getVisualBounds().getWidth());
 			imageview5.setFitHeight(Screen.getPrimary().getVisualBounds().getHeight());
+			imageview6.setFitWidth(Screen.getPrimary().getVisualBounds().getWidth());
+			imageview6.setFitHeight(Screen.getPrimary().getVisualBounds().getHeight());
 	        Button button=new Button("START NEW GAME");
 			Button button2=new Button("GAME FLOW");
 			Button button3=new Button("Back To Main Menu");
@@ -150,21 +156,13 @@ public class Graphicg  extends Application  {
 	        Game.loadHeroes("test_Exp.csv");
 		    Game.loadHeroes("test_Fighters.csv");
 		    Game.loadHeroes("test_MEDS.csv");
-		    GridPane heroesroot=creategrid();
-		    heroesroot.setStyle("-fx-background-image:url('file:thumb-1920-532407.jpg')");
+		    VBox heroesroot=new VBox();
+//		    heroesroot.setPrefWidth(Screen.getPrimary().getVisualBounds().getHeight());
+		    GridPane heroesroot2=new GridPane();
+		    heroesroot2.getChildren().addAll(imageview6,heroesroot);
+		    
 		    int herox=1;
 		    int heroy=1 ;
-//		    Button pick = new Button("Hello "+tf1.getText()+", pick your desired hero to start the game");
-//		    stylebutton(pick);
-//			heroesroot.getChildren().add(pick);
-//			heroesroot.setColumnIndex(pick, 3);
-//			heroesroot.setRowIndex(pick, 0);
-//		    GridPane gameboard=creategrid();
-//		    Group gameroot=new Group();
-//		    gameroot.getChildren().add(gameboard);
-//		    Scene game=new Scene(gameroot);
-//		    gameboard.setStyle("-fx-background-image:url('file:058e9f57ae7ea9001a12b6022c9d985c.png')");
-//		    gameboard.setGridLinesVisible(true);
 		    Button Howtoplay=new Button();
 		    Howtoplay.setText("How To Play");
 		    Text mech = new Text();
@@ -225,17 +223,20 @@ public class Graphicg  extends Application  {
 			    gameex.getChildren().addAll(gameBoard,vbox);
 			    Scene gamee=new Scene(gameex);
 			    ready.setOnAction(e -> primaryStage.setScene(gamee));
-		        Scene heroescene=new Scene(heroesroot);
+		        Scene heroescene=new Scene(heroesroot2);
 			    submit.setOnAction(e -> primaryStage.setScene(heroescene)); 
-		    for(Hero h:Game.availableHeroes) {
+			    heroesroot.setSpacing(10);
+			    heroesroot.setPadding(new Insets(10));
+			    heroesroot.setAlignment(Pos.TOP_CENTER);
+			    for(Hero h:Game.availableHeroes) {
 		    	Button heroo=new Button(h.getName());
 		    	stylebutton(heroo);
 		    	heroesroot.getChildren().add(heroo);
-		    	heroo.setMaxWidth(Double.MAX_VALUE);
+//		    	heroo.setMaxWidth(Double.MAX_VALUE);
 		        heroo.setOnMouseEntered(e -> {
-		        heroo.setMaxHeight(Double.MAX_VALUE);
+//		        heroo.setMaxHeight(Double.MAX_VALUE);
 		        heroo.setText("Type: "+h.herotype()+"\r\n HP: "+h.getMaxHp()+"\r\n AttackDamage:"+h.getAttackDmg()+"\r\n ActionPoints:"+h.getActionsAvailable());
-		        heroo.setFont(Font.font("Chiller",FontWeight.EXTRA_BOLD,10));
+		        heroo.setFont(Font.font("Chiller",FontWeight.EXTRA_BOLD,35));
 		        });
 		        heroo.setOnMouseExited(e-> {
 		        	heroo.setText(h.getName());
@@ -250,10 +251,9 @@ public class Graphicg  extends Application  {
 		    		herox=1;
 		    		heroy=heroy+2;
 		    	}
-		    	heroesroot.setColumnIndex(heroo,herox );
-		    	heroesroot.setRowIndex(heroo, heroy);
-		    	herox++;
-		    	herox++;
+//		    	heroesroot.setColumnIndex(heroo,herox );
+//		    	heroesroot.setRowIndex(heroo, heroy);
+		    	herox=herox+3;
 		    }
 //		    GridPane gameBoard=creategrid();
 //		    gameBoard.setGridLinesVisible(true);
@@ -334,6 +334,10 @@ public void stylebutton2(Button button) {
     public void updatemap (GridPane g) {
     	Image vaci=new Image("file:Vaccines.png");
     	Image supp=new Image("file:cookie-cliparts-transparent-download-clip-art-22.png");
+    	Image figh=new Image("file:41b9ed43f06ab939d651c9ae40923c23.png");
+    	Image zom=new Image("file:6a47f56a1b951814ad6717d4acb1ea3c.png");
+    	Image exp=new Image("file:ryan-brown-final-v3-removebg-preview.png");
+    	Image med=new Image("file:Is+that+the+medic+_b30c839b7e8491dd857fc5d5f435b363-removebg-preview.png");
     	Rectangle tile = new Rectangle(50, 50);
         tile.setFill(Color.BLACK);
         tile.setStroke(Color.WHITE);
@@ -358,6 +362,13 @@ public void stylebutton2(Button button) {
         			}
      				
      		}
+        		else {
+        			if(((CharacterCell)Game.map[i][j]).getCharacter() instanceof Hero) {
+        				if (((CharacterCell)Game.map[i][j]).getCharacter() instanceof Fighter){
+        					
+        				}
+        			}
+        		}
      	}
      }
 
