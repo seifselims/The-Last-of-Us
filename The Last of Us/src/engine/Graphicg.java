@@ -15,12 +15,15 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Path;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import model.characters.Hero;
+import model.collectibles.Vaccine;
+import model.world.CollectibleCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.Group;
@@ -58,7 +61,7 @@ public class Graphicg  extends Application  {
 			Image image2=new Image("file:0w00hui3yqsi27q7.jpg");
 			Image image3 =new Image("file:The-Last-Of-Us-2-Wallpapers-Wallpaper-Cave.jpg");
 			Image image4=new Image("file:67a657199d523f8c4e3a9175a3e19f1d.jpg");
-			Image image5=new Image("file:058e9f57ae7ea9001a12b6022c9d985c.png");
+			Image image5=new Image("file:459748.jpg");
 
 			ImageView imageview=new ImageView(image);
 			ImageView imageview2=new ImageView(image3);
@@ -151,16 +154,16 @@ public class Graphicg  extends Application  {
 		    heroesroot.setStyle("-fx-background-image:url('file:thumb-1920-532407.jpg')");
 		    int herox=1;
 		    int heroy=1 ;
-		    Button pick = new Button("Hello "+tf1.getText()+", pick your desired hero to start the game");
+//		    Button pick = new Button("Hello "+tf1.getText()+", pick your desired hero to start the game");
 //		    stylebutton(pick);
 //			heroesroot.getChildren().add(pick);
 //			heroesroot.setColumnIndex(pick, 3);
 //			heroesroot.setRowIndex(pick, 0);
-		    GridPane gameboard=creategrid();
-		    Group gameroot=new Group();
-		    gameroot.getChildren().add(gameboard);
-		    Scene game=new Scene(gameroot);
-		    gameboard.setStyle("-fx-background-image:url('file:058e9f57ae7ea9001a12b6022c9d985c.png')");
+//		    GridPane gameboard=creategrid();
+//		    Group gameroot=new Group();
+//		    gameroot.getChildren().add(gameboard);
+//		    Scene game=new Scene(gameroot);
+//		    gameboard.setStyle("-fx-background-image:url('file:058e9f57ae7ea9001a12b6022c9d985c.png')");
 //		    gameboard.setGridLinesVisible(true);
 		    Button Howtoplay=new Button();
 		    Howtoplay.setText("How To Play");
@@ -169,7 +172,9 @@ public class Graphicg  extends Application  {
 		    		+ "To move press on '_' for moving upwards, '_' for moving to the left cell, '_' for moving to the right cell, and '_' for moving downwards.\r\n"
 		    		+ "You can move to vaccine and supply cells to pick them up.\r\n"
 		    		+ "Take Care of Zombies! They will attack you if you are in their sight!");
-		    stylebutton(Howtoplay);
+		    Howtoplay.setFont(Font.font("Chiller",FontWeight.EXTRA_BOLD,35));
+			Howtoplay.setTextFill(Color.WHITE);
+			Howtoplay.setStyle("-fx-background-color:black");
 		    styleText(mech);
 		    Button ready=new Button("READY");
 		    stylebutton(ready);
@@ -180,9 +185,48 @@ public class Graphicg  extends Application  {
 		    f.setBackground(Background.fill(Color.BLACK));
 		    f.getChildren().addAll(Howtoplay,mech,ready);
 		    GridPane fscene=new GridPane();
+//		    fscene.setPrefWidth(Screen.getPrimary().getVisualBounds().getHeight());
 		    fscene.getChildren().addAll(imageview5,f);
 			Scene semiscene=new Scene(fscene);
-		    
+			 GridPane gameBoard = new GridPane();
+		        gameBoard.setPrefSize(755, 755);
+
+		        for (int i = 0; i < 15; i++) {
+		            for (int j = 0; j < 15; j++) {
+
+		                Rectangle tile = new Rectangle(50, 50);
+		                tile.setFill(Color.BLACK);
+		                tile.setStroke(Color.WHITE);
+
+		                Text text = new Text();
+		                text.setFont(Font.font(40));
+
+
+		                GridPane.setRowIndex(tile, i);
+		                GridPane.setColumnIndex(tile, j);
+		    	        gameBoard.setPrefWidth(Screen.getPrimary().getVisualBounds().getWidth());
+
+
+		                gameBoard.getChildren().addAll(tile, text);
+		            }
+		        }
+		        gameBoard.setAlignment(Pos.CENTER);
+			    gameBoard.setGridLinesVisible(true);
+			    VBox vbox = new VBox();
+			    vbox.setAlignment(Pos.TOP_RIGHT);
+			    vbox.setSpacing(10);
+			    vbox.setPadding(new Insets(10));
+			    Button quit=new Button("Quit Game");
+			    stylebutton(quit);
+			    quit.setOnAction(e -> primaryStage.setScene(scene));
+			    vbox.getChildren().add(quit);
+			    GridPane gameex=new GridPane();
+			    gameex.setStyle("-fx-background-color:grey");
+			    gameex.getChildren().addAll(gameBoard,vbox);
+			    Scene gamee=new Scene(gameex);
+			    ready.setOnAction(e -> primaryStage.setScene(gamee));
+		        Scene heroescene=new Scene(heroesroot);
+			    submit.setOnAction(e -> primaryStage.setScene(heroescene)); 
 		    for(Hero h:Game.availableHeroes) {
 		    	Button heroo=new Button(h.getName());
 		    	stylebutton(heroo);
@@ -191,13 +235,15 @@ public class Graphicg  extends Application  {
 		        heroo.setOnMouseEntered(e -> {
 		        heroo.setMaxHeight(Double.MAX_VALUE);
 		        heroo.setText("Type: "+h.herotype()+"\r\n HP: "+h.getMaxHp()+"\r\n AttackDamage:"+h.getAttackDmg()+"\r\n ActionPoints:"+h.getActionsAvailable());
-		        	
+		        heroo.setFont(Font.font("Chiller",FontWeight.EXTRA_BOLD,10));
 		        });
 		        heroo.setOnMouseExited(e-> {
 		        	heroo.setText(h.getName());
-		        });
+		        	heroo.setFont(Font.font("Chiller",FontWeight.EXTRA_BOLD,35));	        
+		        	});
 		    	heroo.setOnAction (e -> {primaryStage.setScene(semiscene);
 		    	Game.startGame(h);
+		    	updatemap(gameBoard);
 		    	});
 		    	
 		    	if(herox>3) {
@@ -209,10 +255,11 @@ public class Graphicg  extends Application  {
 		    	herox++;
 		    	herox++;
 		    }
+//		    GridPane gameBoard=creategrid();
+//		    gameBoard.setGridLinesVisible(true);
 		   
-	        Scene heroescene=new Scene(heroesroot);
-		    submit.setOnAction(e -> primaryStage.setScene(heroescene)); 
-	        primaryStage.show();
+	       
+		    primaryStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -262,10 +309,57 @@ public void styleText(Text button) {
 		i1.setColor(Color.RED);
 		InnerShadow i2=new InnerShadow();
 		i2.setColor(Color.WHITE);
-		button.setFont(Font.font("Arial",FontWeight.EXTRA_BOLD,25));
+		button.setFont(Font.font("Arial",FontWeight.EXTRA_BOLD,20));
 		button.setFill(Color.WHITE);
 		button.setStyle(DEFAULTBUTTONSTYLE);
 //	    button.setOnMouseEntered(e -> button.setStyle(HOVERED_BUTTON_STYLE));
 //	    button.setOnMouseExited(e -> button.setStyle(DEFAULTBUTTONSTYLE));
+}
+public void stylebutton2(Button button) {
+	final String HOVERED_BUTTON_STYLE = "-fx-background-color:black";
+    final String DEFAULTBUTTONSTYLE="-fx-background-color:burgundy";
+	DropShadow i=new DropShadow();
+	InnerShadow i1=new InnerShadow();
+	i.setColor(Color.RED);
+	i1.setColor(Color.RED);
+	InnerShadow i2=new InnerShadow();
+	i2.setColor(Color.WHITE);
+	button.setFont(Font.font("Chiller",FontWeight.EXTRA_BOLD,35));
+	button.setTextFill(Color.WHITE);
+	button.setStyle(DEFAULTBUTTONSTYLE);
+    button.setOnMouseEntered(e -> button.setStyle(HOVERED_BUTTON_STYLE));
+    button.setOnMouseExited(e -> button.setStyle(DEFAULTBUTTONSTYLE));
+//	button.setEffect(i1);
+}
+    public void updatemap (GridPane g) {
+    	Image vaci=new Image("file:Vaccines.png");
+    	Image supp=new Image("file:cookie-cliparts-transparent-download-clip-art-22.png");
+    	Rectangle tile = new Rectangle(50, 50);
+        tile.setFill(Color.BLACK);
+        tile.setStroke(Color.WHITE);
+        Rectangle vac=new Rectangle(50,50);
+//      vac.setFill(Color.BLACK);
+        vac.setStroke(Color.WHITE);
+        vac.setFill(new ImagePattern(vaci));
+        Rectangle suppi=new Rectangle(50,50);
+//      suppi.setFill(Color.BLACK);
+        suppi.setStroke(Color.WHITE);
+        suppi.setFill(new ImagePattern(supp));  
+        for(int i=0;i<15;i++) {
+        	for(int j=0;j<15;j++) {
+        		if (Game.map[i][j]instanceof CollectibleCell) {
+        			if(((CollectibleCell)Game.map[i][j]).getCollectible() instanceof Vaccine) {
+        				g.setRowIndex(vac, i);
+        				g.setColumnIndex(vac,j);
+     			}
+        			else {
+        				g.setRowIndex(suppi, i);
+        				g.setColumnIndex(suppi,j);
+        			}
+     				
+     		}
+     	}
+     }
+
 }
 }
