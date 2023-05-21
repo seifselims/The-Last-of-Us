@@ -340,6 +340,14 @@ public void move(Direction d) throws NotEnoughActionsException, MovementExceptio
 			}
 		}	
 	}
+	public String herotype() {
+		if(this instanceof Fighter) 
+			return "Fighter";
+		else if(this instanceof Medic)
+			return "Medic";
+		else
+			return "Explorer";
+	}
 	
 /*	public static void main (String [] args) throws MovementException, NotEnoughActionsException {
 		Fighter x=new Fighter("Batman",100,22,294);
