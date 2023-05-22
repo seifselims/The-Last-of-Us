@@ -1,8 +1,9 @@
-package engine;
+package Views;
 
 import java.io.File;
 import java.nio.file.Paths;
 
+import engine.Game;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
