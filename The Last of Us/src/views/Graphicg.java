@@ -1,8 +1,11 @@
-package engine;
+package views;
 
 import java.io.File;
 import java.nio.file.Paths;
 
+import engine.Game;
+import exceptions.MovementException;
+import exceptions.NotEnoughActionsException;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -14,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Path;
@@ -21,8 +25,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import model.characters.Direction;
+import model.characters.Explorer;
 import model.characters.Fighter;
 import model.characters.Hero;
+import model.characters.Zombie;
 import model.collectibles.Vaccine;
 import model.world.CharacterCell;
 import model.world.CollectibleCell;
@@ -56,10 +63,6 @@ import javafx.scene.layout.StackPane;
 public class Graphicg  extends Application  {
 	public void start(Stage primaryStage) {
 		try {
-//			DropShadow i=new DropShadow();
-//			InnerShadow i1=new InnerShadow();
-//			i.setColor(Color.RED);
-//			i1.setColor(Color.RED);
 			Image image=new Image("file:wp5432176.jpg");
 			Image image2=new Image("file:0w00hui3yqsi27q7.jpg");
 			Image image3 =new Image("file:The-Last-Of-Us-2-Wallpapers-Wallpaper-Cave.jpg");
@@ -119,7 +122,6 @@ public class Graphicg  extends Application  {
 
 			des.setTextAlignment(TextAlignment.CENTER);
 
-//			des.setEffect(i);
 			VBox boxscene2 = new VBox();
 		    boxscene2.setAlignment(Pos.CENTER);
 		    boxscene2.setSpacing(10);
@@ -139,8 +141,6 @@ public class Graphicg  extends Application  {
 			stylebutton(submit);
 			tf1.setFont(Font.font("Chiller",FontWeight.EXTRA_BOLD,35));
 			tf1.setStyle("-fx-background-color:black");
-//			tf1.setEffect(i);
-//			user_id.setEffect(i1);
 
 			VBox boxscene3 = new VBox();
 		    boxscene3.setAlignment(Pos.CENTER);
@@ -157,12 +157,8 @@ public class Graphicg  extends Application  {
 		    Game.loadHeroes("test_Fighters.csv");
 		    Game.loadHeroes("test_MEDS.csv");
 		    VBox heroesroot=new VBox();
-//		    heroesroot.setPrefWidth(Screen.getPrimary().getVisualBounds().getHeight());
 		    GridPane heroesroot2=new GridPane();
 		    heroesroot2.getChildren().addAll(imageview6,heroesroot);
-		    
-		    int herox=1;
-		    int heroy=1 ;
 		    Button Howtoplay=new Button();
 		    Howtoplay.setText("How To Play");
 		    Text mech = new Text();
@@ -183,7 +179,6 @@ public class Graphicg  extends Application  {
 		    f.setBackground(Background.fill(Color.BLACK));
 		    f.getChildren().addAll(Howtoplay,mech,ready);
 		    GridPane fscene=new GridPane();
-//		    fscene.setPrefWidth(Screen.getPrimary().getVisualBounds().getHeight());
 		    fscene.getChildren().addAll(imageview5,f);
 			Scene semiscene=new Scene(fscene);
 			 GridPane gameBoard = new GridPane();
@@ -216,7 +211,11 @@ public class Graphicg  extends Application  {
 			    vbox.setPadding(new Insets(10));
 			    Button quit=new Button("Quit Game");
 			    stylebutton(quit);
-			    quit.setOnAction(e -> primaryStage.setScene(scene));
+			    quit.setOnAction(e -> {
+			    endgame();	
+			    updatemap(gameBoard);
+			    primaryStage.setScene(scene);
+			    });
 			    vbox.getChildren().add(quit);
 			    GridPane gameex=new GridPane();
 			    gameex.setStyle("-fx-background-color:grey");
@@ -232,9 +231,7 @@ public class Graphicg  extends Application  {
 		    	Button heroo=new Button(h.getName());
 		    	stylebutton(heroo);
 		    	heroesroot.getChildren().add(heroo);
-//		    	heroo.setMaxWidth(Double.MAX_VALUE);
 		        heroo.setOnMouseEntered(e -> {
-//		        heroo.setMaxHeight(Double.MAX_VALUE);
 		        heroo.setText("Type: "+h.herotype()+"\r\n HP: "+h.getMaxHp()+"\r\n AttackDamage:"+h.getAttackDmg()+"\r\n ActionPoints:"+h.getActionsAvailable());
 		        heroo.setFont(Font.font("Chiller",FontWeight.EXTRA_BOLD,35));
 		        });
@@ -245,20 +242,61 @@ public class Graphicg  extends Application  {
 		    	heroo.setOnAction (e -> {primaryStage.setScene(semiscene);
 		    	Game.startGame(h);
 		    	updatemap(gameBoard);
+		    	 gamee.setOnKeyReleased(new EventHandler<KeyEvent>() {
+
+						@Override
+						public void handle(KeyEvent e) {
+							switch(e.getCode()) {
+							case W:
+								try {
+									h.move(Direction.UP);
+									updatemap(gameBoard);
+								} catch (NotEnoughActionsException e1) {
+									e1.printStackTrace();
+								} catch (MovementException e1) {
+									e1.printStackTrace();
+								}
+								break;
+							case S:
+								try {
+									h.move(Direction.DOWN);
+									updatemap(gameBoard);
+								} catch (NotEnoughActionsException e1) {
+									e1.printStackTrace();
+								} catch (MovementException e1) {
+									e1.printStackTrace();
+								}
+								break;
+							
+							case A:
+								try {
+									h.move(Direction.LEFT);
+									updatemap(gameBoard);
+								} catch (NotEnoughActionsException e1) {
+									e1.printStackTrace();
+								} catch (MovementException e1) {
+									e1.printStackTrace();
+								}
+								break;
+							case D:
+								try {
+									h.move(Direction.RIGHT);
+									updatemap(gameBoard);
+								} catch (NotEnoughActionsException e1) {
+									e1.printStackTrace();
+								} catch (MovementException e1) {
+									e1.printStackTrace();
+								}
+							}
+						}
+
+				    	
+				    	
+				    });
 		    	});
 		    	
-		    	if(herox>3) {
-		    		herox=1;
-		    		heroy=heroy+2;
-		    	}
-//		    	heroesroot.setColumnIndex(heroo,herox );
-//		    	heroesroot.setRowIndex(heroo, heroy);
-		    	herox=herox+3;
 		    }
-//		    GridPane gameBoard=creategrid();
-//		    gameBoard.setGridLinesVisible(true);
-		   
-	       
+			   
 		    primaryStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -338,26 +376,37 @@ public void stylebutton2(Button button) {
     	Image zom=new Image("file:6a47f56a1b951814ad6717d4acb1ea3c.png");
     	Image exp=new Image("file:ryan-brown-final-v3-removebg-preview.png");
     	Image med=new Image("file:Is+that+the+medic+_b30c839b7e8491dd857fc5d5f435b363-removebg-preview.png");
-    	Rectangle tile = new Rectangle(50, 50);
-        tile.setFill(Color.BLACK);
-        tile.setStroke(Color.WHITE);
-        Rectangle vac=new Rectangle(50,50);
-//      vac.setFill(Color.BLACK);
-        vac.setStroke(Color.WHITE);
-        vac.setFill(new ImagePattern(vaci));
-        Rectangle suppi=new Rectangle(50,50);
+    	
+        
+  
 //      suppi.setFill(Color.BLACK);
-        suppi.setStroke(Color.WHITE);
-        suppi.setFill(new ImagePattern(supp));  
+         
         for(int i=0;i<15;i++) {
         	for(int j=0;j<15;j++) {
         		if (Game.map[i][j]instanceof CollectibleCell) {
         			if(((CollectibleCell)Game.map[i][j]).getCollectible() instanceof Vaccine) {
-        				g.setRowIndex(vac, i);
+//        				Rectangle tile = new Rectangle(50, 50);
+//        		        tile.setFill(Color.BLACK);
+//        		        tile.setStroke(Color.WHITE);
+        				Rectangle vac=new Rectangle(50,50);
+//        		      vac.setFill(Color.BLACK);
+        		        vac.setStroke(Color.WHITE);
+        		        vac.setFill(new ImagePattern(vaci));
+        				g.getChildren().add(vac);
+        				int i1= 14-i;
+        				g.setRowIndex(vac, i1);	
         				g.setColumnIndex(vac,j);
      			}
         			else {
-        				g.setRowIndex(suppi, i);
+//        				Rectangle tile = new Rectangle(50, 50);
+//        		        tile.setFill(Color.BLACK);
+//        		        tile.setStroke(Color.WHITE);
+        				Rectangle suppi=new Rectangle(50,50);
+        				suppi.setStroke(Color.WHITE);
+        		        suppi.setFill(new ImagePattern(supp)); 
+        				g.getChildren().add(suppi);
+        				int i1= 14-i;
+        				g.setRowIndex(suppi, i1);
         				g.setColumnIndex(suppi,j);
         			}
      				
@@ -365,12 +414,61 @@ public void stylebutton2(Button button) {
         		else {
         			if(((CharacterCell)Game.map[i][j]).getCharacter() instanceof Hero) {
         				if (((CharacterCell)Game.map[i][j]).getCharacter() instanceof Fighter){
-        					
+        					Rectangle fight=new Rectangle(50,50);
+            				fight.setStroke(Color.WHITE);
+            		        fight.setFill(new ImagePattern(figh)); 
+            				g.getChildren().add(fight);
+            				int i1= 14-i;
+            				g.setRowIndex(fight, i1);
+            				g.setColumnIndex(fight,j);
         				}
+        				else if (((CharacterCell)Game.map[i][j]).getCharacter() instanceof Explorer){
+        					Rectangle expo=new Rectangle(50,50);
+            				expo.setStroke(Color.WHITE);
+            		        expo.setFill(new ImagePattern(exp)); 
+            				g.getChildren().add(expo);
+            				int i1= 14-i;
+            				g.setRowIndex(expo, i1);
+            				g.setColumnIndex(expo,j);
+        				}
+        				else {
+        					Rectangle medi=new Rectangle(50,50);
+            				medi.setStroke(Color.WHITE);
+            		        medi.setFill(new ImagePattern(med)); 
+            				g.getChildren().add(medi);
+            				int i1= 14-i;
+            				g.setRowIndex(medi, i1);
+            				g.setColumnIndex(medi,j);
+        				}
+        			}
+        			else if (((CharacterCell)Game.map[i][j]).getCharacter() instanceof Zombie) {
+        				Rectangle zomi=new Rectangle(50,50);
+        				zomi.setStroke(Color.WHITE);
+        		        zomi.setFill(new ImagePattern(zom)); 
+        				g.getChildren().add(zomi);
+        				int i1= 14-i;
+        				g.setRowIndex(zomi, i1);
+        				g.setColumnIndex(zomi,j);
+        			}
+        			else {
+        				Rectangle tile = new Rectangle(50, 50);
+        		        tile.setFill(Color.BLACK);
+        		        tile.setStroke(Color.WHITE);
+        		    	g.getChildren().add(tile);
+        		    	int i1= 14-i;
+        				g.setRowIndex(tile, i1);
+        				g.setColumnIndex(tile,j);
         			}
         		}
      	}
      }
 
 }
+    public void endgame() {
+    	for(int i=0;i<15;i++) {
+    		for(int j=0;j<15;j++) {
+    			Game.map[i][j]=new CharacterCell(null);
+    		}
+    	}
+    }
 }
