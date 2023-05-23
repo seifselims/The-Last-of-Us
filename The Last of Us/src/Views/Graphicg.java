@@ -1,4 +1,4 @@
-package Views;
+package views;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -62,9 +62,11 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
+import java.awt.Point;
 public class Graphicg  extends Application  {
 	public void start(Stage primaryStage) {
 		try {
+			ArrayList <Hero> myhero=new ArrayList();
 			Image image=new Image("file:wp5432176.jpg");
 			Image image2=new Image("file:0w00hui3yqsi27q7.jpg");
 			Image image3 =new Image("file:The-Last-Of-Us-2-Wallpapers-Wallpaper-Cave.jpg");
@@ -218,11 +220,7 @@ public class Graphicg  extends Application  {
 			    vbox.setPadding(new Insets(10));
 			    Button quit=new Button("Quit Game");
 			    stylebutton3(quit);
-			    quit.setOnAction(e -> {
-			    endgame();	
-			    updatemap(gameBoard);
-		        primaryStage.setScene(scene);
-			    });		    
+			       
 			   
 //			    scene = new Scene(quit);
 //				  CURE BUTTON
@@ -232,23 +230,7 @@ public class Graphicg  extends Application  {
 //			         curebox.setSpacing(10);
 //			         curebox.setPadding(new Insets(10));
 			        Button cure=new Button("Cure");
-			        cure.setOnAction(e -> { scene2.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-						@Override
-						public void handle(MouseEvent e) {
-							 for(Hero h2:Game.availableHeroes) {
-								   try {
-									h2.cure();
-								} catch (NoAvailableResourcesException | InvalidTargetException | NotEnoughActionsException
-										| MovementException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}
-							   }	
-						}
-						});
-			        	
-			        }); 
+			        
 			        stylebutton3(cure);
 //			        curebox.getChildren().add(cure);
 //		        SPECIAL ACTION
@@ -285,28 +267,38 @@ public class Graphicg  extends Application  {
 //			         attack.setPadding(new Insets(10));
 			        Button  attackz=new Button("Attack");
 			        stylebutton3( attackz);
-			        attackz.setOnAction(e -> { scene2.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-						public void handle(MouseEvent e) {
-							 for(Hero h2:Game.availableHeroes) {
-								 	try {
-										h2.attack();
-									} catch (Exception e1) {
-										// TODO Auto-generated catch block
-										e1.printStackTrace();
-									}
-							   }	
-						}
-						});
-			        });
+			       
 //			        attack.getChildren().add(attackz);
 			        
 			    GridPane gameex=new GridPane();
-			   
+			   VBox info =new VBox();
+			   info.setSpacing(10);
+			   info.setPadding(new Insets(10));
+			   info.setAlignment(Pos.TOP_LEFT);
+			   Text name=new Text();
+			   styleText(name);
+			   Text acpts=new Text();
+			   styleText(acpts);
+			   Text type= new Text();
+			   styleText(type);
+			   Text admg= new Text();
+			   styleText(admg);
+			   Text vax= new Text();
+			   styleText(vax);
+			   Text supz= new Text();
+			   styleText(supz);
+			   Text hp= new Text();
+			   styleText(hp);
+			   info.getChildren().addAll(name,type,hp,acpts,admg, vax, supz);							
 
-			    gameex.setStyle("-fx-background-color:grey");
-			    vbox.getChildren().addAll(quit,cure,attackz,specialaction);
-			    gameex.getChildren().addAll(gameBoard,vbox );
+
+			   Button control=new Button("Control");
+			   stylebutton(control);
+			   Button endturn=new Button("End Turn");
+			   stylebutton(endturn);
+			   gameex.setStyle("-fx-background-color:grey");
+			    vbox.getChildren().addAll(control,cure,attackz,specialaction,endturn,quit);
+			    gameex.getChildren().addAll(info,gameBoard,vbox );
 			    
 			    Scene gamee=new Scene(gameex);
 			    ready.setOnAction(e -> primaryStage.setScene(gamee));
@@ -330,58 +322,22 @@ public class Graphicg  extends Application  {
 		        	heroo.setFont(Font.font("Chiller",FontWeight.EXTRA_BOLD,35));	        
 		        	});
 		    	heroo.setOnAction (e -> {primaryStage.setScene(semiscene);
+		    	myhero.add(h);
 		    	Game.startGame(h)  ; 	
-		    	updatemap(gameBoard);
+		    	updatemap(gameBoard ,myhero.get(0));
 		    	
-	
-		    
-		    	
-		    	 gamee.setOnKeyReleased(new EventHandler<KeyEvent>() {
+
+				gamee.setOnKeyReleased(new EventHandler<KeyEvent>() {
 		    		
 						public void handle(KeyEvent e) {
-							switch(e.getCode()) {
-							case UP:
-								try {
-									h.move(Direction.UP);
-									updatemap(gameBoard);
-								} catch (NotEnoughActionsException e1) {
-									e1.printStackTrace();
-								} catch (MovementException e1) {
-									e1.printStackTrace();
-								}
-								break;
-							case DOWN:
-								try {
-									h.move(Direction.DOWN);
-									updatemap(gameBoard);
-								} catch (NotEnoughActionsException e1) {
-									e1.printStackTrace();
-								} catch (MovementException e1) {
-									e1.printStackTrace();
-								}
-								break;
-							
-							case LEFT:
-								try {
-									h.move(Direction.LEFT);
-									updatemap(gameBoard);
-								} catch (NotEnoughActionsException e1) {
-									e1.printStackTrace();
-								} catch (MovementException e1) {
-									e1.printStackTrace();
-								}
-								break;
-							case RIGHT:
-								try {
-									h.move(Direction.RIGHT);
-									updatemap(gameBoard);
-								} catch (NotEnoughActionsException e1) {
-									e1.printStackTrace();
-								} catch (MovementException e1) {
-									e1.printStackTrace();
-								}
-							}
-							
+							movehero(gameBoard, myhero.get(0), e, info);
+							 name.setText("Name:"+h.getName());
+							   	type.setText("Type:"+h.herotype());
+							   	acpts.setText("Action Points:"+h.getActionsAvailable());
+							   	admg.setText("Attack Damage:"+h.getAttackDmg());
+							   	vax.setText("No. of Vaccines:"+h.getVaccineInventory().size());
+							   	supz.setText("No. of Supplies:"+h.getSupplyInventory().size());
+									hp.setText("Health:"+h.getCurrentHp());
 						}
 						
 						
@@ -389,34 +345,121 @@ public class Graphicg  extends Application  {
 		    	});
 		    	
 		    }
+			    quit.setOnAction(e -> {
+				    endgame();	
+				    updatemap(gameBoard,myhero.get(0));
+			        primaryStage.setScene(scene);
+				    });		 
 			   
+			 
+			    cure.setOnAction(e -> { scene2.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+					
+					public void handle(MouseEvent e) {
+							   try {
+								myhero.get(0).cure();
+								updatemap(gameBoard,myhero.get(0));
+								 name.setText("Name:"+myhero.get(0).getName());
+								   	type.setText("Type:"+myhero.get(0).herotype());
+								   	acpts.setText("Action Points:"+myhero.get(0).getActionsAvailable());
+								   	admg.setText("Attack Damage:"+myhero.get(0).getAttackDmg());
+								   	vax.setText("No. of Vaccines:"+myhero.get(0).getVaccineInventory().size());
+								   	supz.setText("No. of Supplies:"+myhero.get(0).getSupplyInventory().size());
+										hp.setText("Health:"+myhero.get(0).getCurrentHp());
+							} catch (NoAvailableResourcesException | InvalidTargetException | NotEnoughActionsException
+									| MovementException e1) {
+								e1.printStackTrace();
+							}
+						  	
+					}
+					});
+		        	
+		        }); 
+			    attackz.setOnAction(e -> { scene2.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+					public void handle(MouseEvent e) {
+							 	try {
+									myhero.get(0).attack();
+									updatemap(gameBoard,myhero.get(0));
+									 name.setText("Name:"+myhero.get(0).getName());
+									   	type.setText("Type:"+myhero.get(0).herotype());
+									   	acpts.setText("Action Points:"+myhero.get(0).getActionsAvailable());
+									   	admg.setText("Attack Damage:"+myhero.get(0).getAttackDmg());
+									   	vax.setText("No. of Vaccines:"+myhero.get(0).getVaccineInventory().size());
+									   	supz.setText("No. of Supplies:"+myhero.get(0).getSupplyInventory().size());
+											hp.setText("Health:"+myhero.get(0).getCurrentHp());
+								} catch (Exception e1) {
+									e1.printStackTrace();
+								}
+						   	
+					}
+					});
+		        });
+			    control.setOnAction(e-> {
+			    	if(myhero.get(0).getTarget() instanceof Hero) {
+			    	Hero b=(Hero)myhero.get(0).getTarget();
+			    	myhero.remove(0);
+			    	myhero.add(b);
+			    	updatemap(gameBoard,myhero.get(0));
+			    	 name.setText("Name:"+myhero.get(0).getName());
+					   	type.setText("Type:"+myhero.get(0).herotype());
+					   	acpts.setText("Action Points:"+myhero.get(0).getActionsAvailable());
+					   	admg.setText("Attack Damage:"+myhero.get(0).getAttackDmg());
+					   	vax.setText("No. of Vaccines:"+myhero.get(0).getVaccineInventory().size());
+					   	supz.setText("No. of Supplies:"+myhero.get(0).getSupplyInventory().size());
+							hp.setText("Health:"+myhero.get(0).getCurrentHp());
+			    	}
+			    	
+			    });
+			    endturn.setOnAction(e-> {
+			    	try {
+						Game.endTurn();
+						
+				    		updatemap(gameBoard,myhero.get(0));
+								 name.setText("Name:"+myhero.get(0).getName());
+								   	type.setText("Type:"+myhero.get(0).herotype());
+								   	acpts.setText("Action Points:"+myhero.get(0).getActionsAvailable());
+								   	admg.setText("Attack Damage:"+myhero.get(0).getAttackDmg());
+								   	vax.setText("No. of Vaccines:"+myhero.get(0).getVaccineInventory().size());
+								   	supz.setText("No. of Supplies:"+myhero.get(0).getSupplyInventory().size());
+										hp.setText("Health:"+myhero.get(0).getCurrentHp());
+							
+							
+							
+					   
+						
+						
+					} catch (InvalidTargetException | NotEnoughActionsException e1) {
+						e1.printStackTrace();
+					}
+			    	
+			    });
 		   
-		    primaryStage.show();
+			    primaryStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 		
 	}
-	
-	public GridPane creategrid() {
-		GridPane g=new GridPane();  
-		for (int i = 0; i < 15; i++) {
-	            ColumnConstraints colConst = new ColumnConstraints();
-	            colConst.setPercentWidth(100.0 / 15);
-	            g.getColumnConstraints().add(colConst);
-	      
-		        	
-		    }
-	        for (int i = 0; i < 15; i++) {
-	            RowConstraints rowConst = new RowConstraints();
-	            rowConst.setPercentHeight(100.0 / 15);
-	            g.getRowConstraints().add(rowConst);
-		
-	}
-	        
-	        return g;
-	    
-	}
+//	public GridPane creategrid() {
+//		GridPane g=new GridPane();  
+//		for (int i = 0; i < 15; i++) {
+//	            ColumnConstraints colConst = new ColumnConstraints();
+//	            colConst.setPercentWidth(100.0 / 15);
+//	            g.getColumnConstraints().add(colConst);
+//	      
+//		        	
+//		    }
+//	        for (int i = 0; i < 15; i++) {
+//	            RowConstraints rowConst = new RowConstraints();
+//	            rowConst.setPercentHeight(100.0 / 15);
+//	            g.getRowConstraints().add(rowConst);
+//		
+//	}
+//	        
+//	        return g;
+//	    
+//	}
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -485,14 +528,13 @@ public void stylebutton2(Button button) {
     button.setOnMouseExited(e -> button.setStyle(DEFAULTBUTTONSTYLE));
 //	button.setEffect(i1);
 }
-    public void updatemap (GridPane g) {
+    public void updatemap (GridPane g, Hero h) {
     	Image vaci=new Image("file:Vaccines.png");
     	Image supp=new Image("file:cookie-cliparts-transparent-download-clip-art-22.png");
     	Image figh=new Image("file:41b9ed43f06ab939d651c9ae40923c23.png");
     	Image zom=new Image("file:6a47f56a1b951814ad6717d4acb1ea3c.png");
     	Image exp=new Image("file:ryan-brown-final-v3-removebg-preview.png");
     	Image med=new Image("file:Is+that+the+medic+_b30c839b7e8491dd857fc5d5f435b363-removebg-preview.png");
-    	
         
   
 //      suppi.setFill(Color.BLACK);
@@ -509,21 +551,39 @@ public void stylebutton2(Button button) {
 //        		      vac.setFill(Color.BLACK);
         		        vac.setStroke(Color.WHITE);
         		        vac.setFill(new ImagePattern(vaci));
-        				g.getChildren().add(vac);
         				int i1= 14-i;
+//        				for(int k=0;k<g.getChildren().size();k++) {
+//        					int ii=g.getRowIndex(g.getChildren().get(k));
+//        					int jj=g.getColumnIndex(g.getChildren().get(k));
+//        					if(ii==i1 && jj==j) {
+//        						g.getChildren().remove(k);
+//        					}
+//        				}
+        				g.getChildren().addAll(vac);
+
+//        				g.setRowIndex(null, i1);
+//        				g.setColumnIndex(null,j);
         				g.setRowIndex(vac, i1);	
         				g.setColumnIndex(vac,j);
         				
      			}
         			else {
-//        				Rectangle tile = new Rectangle(50, 50);
-//        		        tile.setFill(Color.BLACK);
-//        		        tile.setStroke(Color.WHITE);
         				Rectangle suppi=new Rectangle(50,50);
         				suppi.setStroke(Color.WHITE);
         		        suppi.setFill(new ImagePattern(supp)); 
-        				g.getChildren().add(suppi);
+        				
         				int i1= 14-i;
+//        				for(int k=0;k<g.getChildren().size();k++) {
+//        					int ii=g.getRowIndex(g.getChildren().get(k));
+//        					int jj=g.getColumnIndex(g.getChildren().get(k));
+//        					if(ii==i1 && jj==j) {
+//        						g.getChildren().remove(k);
+//        					}
+//        				}
+        				g.getChildren().add(suppi);
+
+//        				g.setRowIndex(null, i1);
+//        				g.setColumnIndex(null,j);
         				g.setRowIndex(suppi, i1);
         				g.setColumnIndex(suppi,j);
         			}
@@ -532,15 +592,37 @@ public void stylebutton2(Button button) {
      		}
         		else {
         			if(Game.map[i][j] instanceof CharacterCell) {
+        				Button x=new Button();
+        				x.setMaxWidth(50);
+        				x.setMaxHeight(50);
+        				x.setStyle("-fx-background-color:transparent");
+        			
         				if(((CharacterCell)Game.map[i][j]).getCharacter() instanceof Hero) {
             				if (((CharacterCell)Game.map[i][j]).getCharacter() instanceof Fighter){
             					Rectangle fight=new Rectangle(50,50);
                 				fight.setStroke(Color.WHITE);
                 		        fight.setFill(new ImagePattern(figh)); 
-                				g.getChildren().add(fight);
                 				int i1= 14-i;
+//                				g.setRowIndex(null, i1);
+//                				g.setColumnIndex(null,j);
+//                				for(int k=0;k<g.getChildren().size();k++) {
+//                					int ii=g.getRowIndex(g.getChildren().get(k));
+//                					int jj=g.getColumnIndex(g.getChildren().get(k));
+//                					if(ii==i1 && jj==j) {
+//                						g.getChildren().remove(k);
+//                					}
+//                				}
+                				g.getChildren().addAll(x,fight);
+
+                				g.setRowIndex(x, i1);
+                				g.setColumnIndex(x,j);
                 				g.setRowIndex(fight, i1);
                 				g.setColumnIndex(fight,j);
+                				int i2=i;
+                				int j2=j;
+                				x.setOnMouseClicked(e->{
+                				h.setTarget(((CharacterCell)Game.map[i2][j2]).getCharacter());
+                				});
                 			
             				}
             				
@@ -548,29 +630,84 @@ public void stylebutton2(Button button) {
             					Rectangle expo=new Rectangle(50,50);
                 				expo.setStroke(Color.WHITE);
                 		        expo.setFill(new ImagePattern(exp)); 
-                				g.getChildren().add(expo);
                 				int i1= 14-i;
+//                				g.setRowIndex(null, i1);
+//                				g.setColumnIndex(null,j);
+//                				for(int k=0;k<g.getChildren().size();k++) {
+//                					int ii=g.getRowIndex(g.getChildren().get(k));
+//                					int jj=g.getColumnIndex(g.getChildren().get(k));
+//                					if(ii==i1 && jj==j) {
+//                						g.getChildren().remove(k);
+//                					}
+//                				}
+                				g.getChildren().addAll(x,expo);
+
+                				g.setRowIndex(x, i1);
+                				g.setColumnIndex(x,j);
                 				g.setRowIndex(expo, i1);
                 				g.setColumnIndex(expo,j);
+                				int i2=i;
+                				int j2=j;
+                				x.setOnMouseClicked(e->{
+                				h.setTarget(((CharacterCell)Game.map[i2][j2]).getCharacter());
+                				});
+                			
             				}
             				else {
             					Rectangle medi=new Rectangle(50,50);
                 				medi.setStroke(Color.WHITE);
                 		        medi.setFill(new ImagePattern(med)); 
-                				g.getChildren().add(medi);
                 				int i1= 14-i;
+//                				g.setRowIndex(null, i1);
+//                				g.setColumnIndex(null,j);
+//                				for(int k=0;k<g.getChildren().size();k++) {
+//                					int ii=g.getRowIndex(g.getChildren().get(k));
+//                					int jj=g.getColumnIndex(g.getChildren().get(k));
+//                					if(ii==i1 && jj==j) {
+//                						g.getChildren().remove(k);
+//                						break;
+//                					}
+//                				}
+                				g.getChildren().addAll(x,medi);
+
+                				g.setRowIndex(x, i1);
+                				g.setColumnIndex(x,j);
                 				g.setRowIndex(medi, i1);
                 				g.setColumnIndex(medi,j);
+                				int i2=i;
+                				int j2=j;
+                				x.setOnMouseClicked(e->{
+                				h.setTarget(((CharacterCell)Game.map[i2][j2]).getCharacter());
+                				});
+                			
             				}
             			}
             			else if (((CharacterCell) Game.map[i][j]).getCharacter() instanceof Zombie) {
             				Rectangle zomi=new Rectangle(50,50);
             				zomi.setStroke(Color.WHITE);
             		        zomi.setFill(new ImagePattern(zom)); 
-            				g.getChildren().add(zomi);
             				int i1= 14-i;
+//            				g.setRowIndex(null, i1);
+//            				g.setColumnIndex(null,j);
+//            				for(int k=0;k<g.getChildren().size();k++) {
+//            					int ii=g.getRowIndex(g.getChildren().get(k));
+//            					int jj=g.getColumnIndex(g.getChildren().get(k));
+//            					if(ii==i1 && jj==j) {
+//            						g.getChildren().remove(k);
+//            					}
+//            				}
+            				g.getChildren().addAll(x,zomi);
+
+            				g.setRowIndex(x, i1);
+            				g.setColumnIndex(x,j);
             				g.setRowIndex(zomi, i1);
             				g.setColumnIndex(zomi,j);
+            				int i2=i;
+            				int j2=j;
+            				x.setOnMouseClicked(e->{
+            				h.setTarget(((CharacterCell)Game.map[i2][j2]).getCharacter());
+            				});
+            			
             			}
         			}
         		
@@ -578,9 +715,19 @@ public void stylebutton2(Button button) {
         				Rectangle tile = new Rectangle(50, 50);
         		        tile.setFill(Color.BLACK);
         		        tile.setStroke(Color.WHITE);
-        		    	g.getChildren().add(tile);
         		    	int i1= 14-i;
-        				g.setRowIndex(tile, i1);
+//        		    	g.setRowIndex(null, i1);
+//        				g.setColumnIndex(null,j);
+//        		    	for(int k=0;k<g.getChildren().size();k++) {
+//        					int ii=g.getRowIndex(g.getChildren().get(k));
+//        					int jj=g.getColumnIndex(g.getChildren().get(k));
+//        					if(ii==i1 && jj==j) {
+//        						g.getChildren().remove(k);
+//        					}
+//        				}
+        		    	g.getChildren().add(tile);
+
+        		    	g.setRowIndex(tile, i1);
         				g.setColumnIndex(tile,j);
         			}
         		}
@@ -598,6 +745,303 @@ public void stylebutton2(Button button) {
     	
     }
 
+public void movehero(GridPane gameBoard, Hero h, KeyEvent e, VBox info) {
+	switch(e.getCode()) {
+	case UP:
+		try {
+			h.move(Direction.UP);
+//			Point p=h.getLocation();
+//			Rectangle tile = new Rectangle(50, 50);
+//	        tile.setFill(Color.BLACK);
+//	        tile.setStroke(Color.WHITE);
+//	    	int i1= 14-p.x;			
+//	    	gameBoard.setRowIndex(null, i1);
+//			gameBoard.setColumnIndex(null,p.y);
+//	    	gameBoard.getChildren().add(tile);
+//
+//	    	gameBoard.setRowIndex(tile, i1);
+//			gameBoard.setColumnIndex(tile,p.y);
+			updatemap(gameBoard,h);
+
+		} catch (NotEnoughActionsException e1) {
+			e1.printStackTrace();
+		} catch (MovementException e1) {
+			e1.printStackTrace();
+		}
+		break;
+	case DOWN:
+		try {
+			h.move(Direction.DOWN);
+//			Point p=h.getLocation();
+//			Rectangle tile = new Rectangle(50, 50);
+//	        tile.setFill(Color.BLACK);
+//	        tile.setStroke(Color.WHITE);
+//	    	int i1= 14-p.x;			
+//	     	gameBoard.setRowIndex(null, i1);
+//			gameBoard.setColumnIndex(null,p.y);
+//	    	gameBoard.getChildren().add(tile);
+//
+//	    	gameBoard.setRowIndex(tile, i1);
+//			gameBoard.setColumnIndex(tile,p.y);
+			updatemap(gameBoard,h);
+
+			
+
+		} catch (NotEnoughActionsException e1) {
+			e1.printStackTrace();
+		} catch (MovementException e1) {
+			e1.printStackTrace();
+		}
+		break;
+	
+	case LEFT:
+		try {
+			h.move(Direction.LEFT);
+
+			updatemap(gameBoard,h);
+
+
+		} catch (NotEnoughActionsException e1) {
+			e1.printStackTrace();
+		} catch (MovementException e1) {
+			e1.printStackTrace();
+		}
+		break;
+	case RIGHT:
+		try {
+			h.move(Direction.RIGHT);
+//			Point p=h.getLocation();
+//			Rectangle tile = new Rectangle(50, 50);
+//	        tile.setFill(Color.BLACK);
+//	        tile.setStroke(Color.WHITE);
+//	    	int i1= 14-p.x;			
+//	     	gameBoard.setRowIndex(null, i1);
+//			gameBoard.setColumnIndex(null,p.y);
+//	    	gameBoard.getChildren().add(tile);
+//
+//	    	gameBoard.setRowIndex(tile, i1);
+//			gameBoard.setColumnIndex(tile,p.y);
+//			gameBoard.setRowIndex(null, i1);
+//			gameBoard.setColumnIndex(null,p.y);
+			updatemap(gameBoard,h);
+
+			
+		} catch (NotEnoughActionsException e1) {
+			e1.printStackTrace();
+		} catch (MovementException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+}
+
+//public void updatemap (GridPane g, Hero h) {
+//	Image vaci=new Image("file:Vaccines.png");
+//	Image supp=new Image("file:cookie-cliparts-transparent-download-clip-art-22.png");
+//	Image figh=new Image("file:41b9ed43f06ab939d651c9ae40923c23.png");
+//	Image zom=new Image("file:6a47f56a1b951814ad6717d4acb1ea3c.png");
+//	Image exp=new Image("file:ryan-brown-final-v3-removebg-preview.png");
+//	Image med=new Image("file:Is+that+the+medic+_b30c839b7e8491dd857fc5d5f435b363-removebg-preview.png");
+//    
+//
+////  suppi.setFill(Color.BLACK);
+//     
+//    for(int i=0;i<15;i++) {
+//    	for(int j=0;j<15;j++) {
+//    		
+//    		if (Game.map[i][j]instanceof CollectibleCell) {
+//    			if(((CollectibleCell)Game.map[i][j]).getCollectible() instanceof Vaccine) {
+////    				Rectangle tile = new Rectangle(50, 50);
+////    		        tile.setFill(Color.BLACK);
+////    		        tile.setStroke(Color.WHITE);
+//    				Rectangle vac=new Rectangle(50,50);
+////    		      vac.setFill(Color.BLACK);
+//    		        vac.setStroke(Color.WHITE);
+//    		        vac.setFill(new ImagePattern(vaci));
+//    				int i1= 14-i;
+//    				for(int k=0;k<g.getChildren().size();k++) {
+//    					int ii=g.getRowIndex(g.getChildren().get(k));
+//    					int jj=g.getColumnIndex(g.getChildren().get(k));
+//    					if(ii==i1 && jj==j) {
+//    						g.getChildren().remove(k);
+//    					}
+//    				}
+//    				g.getChildren().addAll(vac);
+//
+//    				g.setRowIndex(null, i1);
+//    				g.setColumnIndex(null,j);
+//    				g.setRowIndex(vac, i1);	
+//    				g.setColumnIndex(vac,j);
+//    				
+// 			}
+//    			else {
+//    				Rectangle suppi=new Rectangle(50,50);
+//    				suppi.setStroke(Color.WHITE);
+//    		        suppi.setFill(new ImagePattern(supp)); 
+//    				
+//    				int i1= 14-i;
+//    				for(int k=0;k<g.getChildren().size();k++) {
+//    					int ii=g.getRowIndex(g.getChildren().get(k));
+//    					int jj=g.getColumnIndex(g.getChildren().get(k));
+//    					if(ii==i1 && jj==j) {
+//    						g.getChildren().remove(k);
+//    					}
+//    				}
+//    				g.getChildren().add(suppi);
+//
+//    				g.setRowIndex(null, i1);
+//    				g.setColumnIndex(null,j);
+//    				g.setRowIndex(suppi, i1);
+//    				g.setColumnIndex(suppi,j);
+//    			}
+//    			
+// 				
+// 		}
+//    		else {
+//    			if(Game.map[i][j] instanceof CharacterCell) {
+//    				Button x=new Button();
+//    				x.setMaxWidth(50);
+//    				x.setMaxHeight(50);
+//    				x.setStyle("-fx-background-color:transparent");
+//    			
+//    				if(((CharacterCell)Game.map[i][j]).getCharacter() instanceof Hero) {
+//        				if (((CharacterCell)Game.map[i][j]).getCharacter() instanceof Fighter){
+//        					Rectangle fight=new Rectangle(50,50);
+//            				fight.setStroke(Color.WHITE);
+//            		        fight.setFill(new ImagePattern(figh)); 
+//            				int i1= 14-i;
+//            				g.setRowIndex(null, i1);
+//            				g.setColumnIndex(null,j);
+//            				for(int k=0;k<g.getChildren().size();k++) {
+//            					int ii=g.getRowIndex(g.getChildren().get(k));
+//            					int jj=g.getColumnIndex(g.getChildren().get(k));
+//            					if(ii==i1 && jj==j) {
+//            						g.getChildren().remove(k);
+//            					}
+//            				}
+//            				g.getChildren().addAll(x,fight);
+//
+//            				g.setRowIndex(x, i1);
+//            				g.setColumnIndex(x,j);
+//            				g.setRowIndex(fight, i1);
+//            				g.setColumnIndex(fight,j);
+//            				int i2=i;
+//            				int j2=j;
+//            				x.setOnMouseClicked(e->{
+//            				h.setTarget(((CharacterCell)Game.map[i2][j2]).getCharacter());
+//            				});
+//            			
+//        				}
+//        				
+//        				else if (((CharacterCell)Game.map[i][j]).getCharacter() instanceof Explorer){
+//        					Rectangle expo=new Rectangle(50,50);
+//            				expo.setStroke(Color.WHITE);
+//            		        expo.setFill(new ImagePattern(exp)); 
+//            				int i1= 14-i;
+//            				g.setRowIndex(null, i1);
+//            				g.setColumnIndex(null,j);
+//            				for(int k=0;k<g.getChildren().size();k++) {
+//            					int ii=g.getRowIndex(g.getChildren().get(k));
+//            					int jj=g.getColumnIndex(g.getChildren().get(k));
+//            					if(ii==i1 && jj==j) {
+//            						g.getChildren().remove(k);
+//            					}
+//            				}
+//            				g.getChildren().addAll(x,expo);
+//
+//            				g.setRowIndex(x, i1);
+//            				g.setColumnIndex(x,j);
+//            				g.setRowIndex(expo, i1);
+//            				g.setColumnIndex(expo,j);
+//            				int i2=i;
+//            				int j2=j;
+//            				x.setOnMouseClicked(e->{
+//            				h.setTarget(((CharacterCell)Game.map[i2][j2]).getCharacter());
+//            				});
+//            			
+//        				}
+//        				else {
+//        					Rectangle medi=new Rectangle(50,50);
+//            				medi.setStroke(Color.WHITE);
+//            		        medi.setFill(new ImagePattern(med)); 
+//            				int i1= 14-i;
+//            				g.setRowIndex(null, i1);
+//            				g.setColumnIndex(null,j);
+//            				for(int k=0;k<g.getChildren().size();k++) {
+//            					int ii=g.getRowIndex(g.getChildren().get(k));
+//            					int jj=g.getColumnIndex(g.getChildren().get(k));
+//            					if(ii==i1 && jj==j) {
+//            						g.getChildren().remove(k);
+//            						break;
+//            					}
+//            				}
+//            				g.getChildren().addAll(x,medi);
+//
+//            				g.setRowIndex(x, i1);
+//            				g.setColumnIndex(x,j);
+//            				g.setRowIndex(medi, i1);
+//            				g.setColumnIndex(medi,j);
+//            				int i2=i;
+//            				int j2=j;
+//            				x.setOnMouseClicked(e->{
+//            				h.setTarget(((CharacterCell)Game.map[i2][j2]).getCharacter());
+//            				});
+//            			
+//        				}
+//        			}
+//        			else if (((CharacterCell) Game.map[i][j]).getCharacter() instanceof Zombie) {
+//        				Rectangle zomi=new Rectangle(50,50);
+//        				zomi.setStroke(Color.WHITE);
+//        		        zomi.setFill(new ImagePattern(zom)); 
+//        				int i1= 14-i;
+//        				g.setRowIndex(null, i1);
+//        				g.setColumnIndex(null,j);
+//        				for(int k=0;k<g.getChildren().size();k++) {
+//        					int ii=g.getRowIndex(g.getChildren().get(k));
+//        					int jj=g.getColumnIndex(g.getChildren().get(k));
+//        					if(ii==i1 && jj==j) {
+//        						g.getChildren().remove(k);
+//        					}
+//        				}
+//        				g.getChildren().addAll(x,zomi);
+//
+//        				g.setRowIndex(x, i1);
+//        				g.setColumnIndex(x,j);
+//        				g.setRowIndex(zomi, i1);
+//        				g.setColumnIndex(zomi,j);
+//        				int i2=i;
+//        				int j2=j;
+//        				x.setOnMouseClicked(e->{
+//        				h.setTarget(((CharacterCell)Game.map[i2][j2]).getCharacter());
+//        				});
+//        			
+//        			}
+//    			}
+//    		
+//    			else {
+//    				Rectangle tile = new Rectangle(50, 50);
+//    		        tile.setFill(Color.BLACK);
+//    		        tile.setStroke(Color.WHITE);
+//    		    	int i1= 14-i;
+//    		    	g.setRowIndex(null, i1);
+//    				g.setColumnIndex(null,j);
+//    		    	for(int k=0;k<g.getChildren().size();k++) {
+//    					int ii=g.getRowIndex(g.getChildren().get(k));
+//    					int jj=g.getColumnIndex(g.getChildren().get(k));
+//    					if(ii==i1 && jj==j) {
+//    						g.getChildren().remove(k);
+//    					}
+//    				}
+//    		    	g.getChildren().add(tile);
+//
+//    		    	g.setRowIndex(tile, i1);
+//    				g.setColumnIndex(tile,j);
+//    			}
+//    		}
+// 	}
+// }
+//
+//}
 }
 
 
