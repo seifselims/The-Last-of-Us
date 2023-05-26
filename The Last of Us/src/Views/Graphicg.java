@@ -68,6 +68,11 @@ import java.awt.Point;
 import javafx.concurrent.Task;
 import java.util.concurrent.FutureTask;
 import  java.util.concurrent.RunnableFuture;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+
 import javafx.application.Platform;
 import java.lang.Long;
 
@@ -106,6 +111,8 @@ public class Graphicg  extends Application  {
 			Button button2=new Button("GAME FLOW");
 			Button button3=new Button("Back To Main Menu");
 			Button button4=new Button("Back To Main Menu");
+
+		        
 			stylebutton(button);
 			stylebutton(button2);
 			stylebutton(button3);
@@ -153,10 +160,10 @@ public class Graphicg  extends Application  {
 			tf1.setStyle("-fx-background-color:black");
 			button3.setOnAction(e -> primaryStage.setScene(scene)); 
 			primaryStage.setScene(scene);
-	        Game.loadHeroes("test_Exp.csv");
-		    Game.loadHeroes("test_Fighters.csv");
-		    Game.loadHeroes("test_MEDS.csv");
-//			Game.loadHeroes("Heroes.csv");
+//	        Game.loadHeroes("test_Exp.csv");
+//		    Game.loadHeroes("test_Fighters.csv");
+//		    Game.loadHeroes("test_MEDS.csv");
+			Game.loadHeroes("Heroes.csv");
 		    GridPane heroesroot=new GridPane();
 		    GridPane heroesroot2=new GridPane();
 		    VBox pick=new VBox();
@@ -171,12 +178,12 @@ public class Graphicg  extends Application  {
 		    Howtoplay.setText("How To Play");
 		    Text mech = new Text();
 		    mech.setText("READ INSTRUCTIONS CAREFULLY!\r\n"
-		    		+ "You are only allowed to move up, left, right, and down.To move press on \"UP\" for moving upwards, \"LEFT\" for moving to the left cell, \"RIGHT\" for moving to the right cell, and \"DOWN\" for moving downwards. \r\n"
+		    		+ "You are only allowed to move up, left, right, and down.To move press on \'↑\' for moving upwards, \'←\' for moving to the left cell, \'→\' for moving to the right cell, and \'↓\' for moving downwards. \r\n"
 		    		+ "You can move to vaccine and supply cells to pick them up. \r\n"
 		    		+ "While near a zombie press on 'Z' to set target on it and 'A' to attack the Zombie or 'C' to cure the Zombie if You have Vaccines left.\r\n"
 		    		+ "To Target another Hero press on 'H' to set target on it.\r\n"
 		    		+ "To Use a hero's Special ability press on 'U' if you have Supplies left.\r\n"
-		    		+ "You are free to control another hero if you successfully cured the zombie. \r\n"
+		    		+ "You are free to control another hero if you successfully cured the zombie. Press 'P'or 'H'(if hero is adjacent) to set target on other heroes then click control to change hero. \r\n"
 		    		+ "Take Care of Zombies! They will attack you if you are in their sight!");
 		    Howtoplay.setFont(Font.font("Chiller",FontWeight.EXTRA_BOLD,35));
 			Howtoplay.setTextFill(Color.WHITE);
@@ -280,19 +287,7 @@ public class Graphicg  extends Application  {
 			   styleText(hp);
 			   info.getChildren().addAll(name,type,hp,acpts,admg, vax, supz);							
 			   
-//			    gameBoard.setOnMouseClicked(new EventHandler<MouseEvent>() {
-//			    	public void handle(MouseEvent e) {
-//			    		for(int i=0;i<gameBoard.getChildren().size();i++) {
-//			    			if( e.getTarget()==gameBoard.getChildren().get(i)) {
-//			    				int x=gameBoard.getRowIndex(gameBoard.getChildren().get(i));
-//			    				int y=gameBoard.getColumnIndex(gameBoard.getChildren().get(i));
-//			    				x=14-x;
-//			    				if(Game.map[x][y] instanceof CharacterCell)
-//			    				myhero.get(0).setTarget(((CharacterCell)Game.map[x][y]).getCharacter());
-//			    			}
-//			    		}
-//			    	}
-//			    });
+
 			   Button control=new Button("Control");
 			   stylebutton(control);
 			   Button endturn=new Button("End Turn");
@@ -317,23 +312,17 @@ public class Graphicg  extends Application  {
 			    column4.setPercentWidth(20);
 			    RowConstraints row1 = new RowConstraints();
 			    row1.setPercentHeight(90);
-//			    row1.setValignment(VPos.BOTTOM);
 			    RowConstraints row2 = new RowConstraints();
 			    row2.setPercentHeight(90);
-//			    row2.setValignment(VPos.BOTTOM);
 
 			    RowConstraints row3 = new RowConstraints();
 			    row3.setPercentHeight(30);
-//			    row3.setValignment(VPos.BOTTOM);
 
 			    RowConstraints row4 = new RowConstraints();
 			    row4.setPercentHeight(30);
-//			    row4.setValignment(VPos.BOTTOM);
 
 			    heroesroot.getColumnConstraints().addAll(column1,column2,column3,column4);
 			    heroesroot.getRowConstraints().addAll(row1,row2,row3,row4);
-//			    heroesroot.setSpacing(15);
-//			    heroesroot.setPadding(new Insets(10));
 			    heroesroot.setPadding(new Insets(10));
 			    int herox=0;
 			    int heroy=0;
@@ -385,18 +374,7 @@ public class Graphicg  extends Application  {
 								attacktest(gameex,myhero.get(0),gameBoard,e);
 								updatepast(gameBoard,myhero.get(0));
 
-//							} catch (NotEnoughActionsException e1) {
-//								// TODO Auto-generated catch block
-//								e1.printStackTrace();
-//							} catch (InvalidTargetException e1) {
-//								// TODO Auto-generated catch block
-//								e1.printStackTrace();
-//							} catch (NoAvailableResourcesException e1) {
-//								// TODO Auto-generated catch block
-//								e1.printStackTrace();
-//							} catch (MovementException e1) {
-//								// TODO Auto-generated catch block
-//								e1.printStackTrace();
+
 							} catch (Exception e1) {
 								e1.printStackTrace();
 							}
@@ -407,66 +385,7 @@ public class Graphicg  extends Application  {
 					
 			    });
 			    
-//			    quit.setOnAction(e -> {
-//				    try {
-//						endgame(myhero.get(0),gameBoard);
-//					} catch (InvalidTargetException e1) {
-//						// TODO Auto-generated catch block
-//						e1.printStackTrace();
-//					} catch (NotEnoughActionsException e1) {
-//						// TODO Auto-generated catch block
-//						e1.printStackTrace();
-//					}	
-////				    updatePast(gameBoard,myhero.get(0));
-//			        primaryStage.setScene(scene);
-//				    });		
-			    
-			   
-			 
-//			    cure.setOnAction(e -> { scene2.setOnMouseClicked(new EventHandler<MouseEvent>() {
-//
-//					
-//					public void handle(MouseEvent e) {
-//							   try {
-//								myhero.get(0).cure();
-//								updatemap(gameBoard,myhero.get(0));
-//								 name.setText("Name:"+myhero.get(0).getName());
-//								   	type.setText("Type:"+myhero.get(0).herotype());
-//								   	acpts.setText("Action Points:"+myhero.get(0).getActionsAvailable());
-//								   	admg.setText("Attack Damage:"+myhero.get(0).getAttackDmg());
-//								   	vax.setText("No. of Vaccines:"+myhero.get(0).getVaccineInventory().size());
-//								   	supz.setText("No. of Supplies:"+myhero.get(0).getSupplyInventory().size());
-//										hp.setText("Health:"+myhero.get(0).getCurrentHp());
-//							} catch (NoAvailableResourcesException | InvalidTargetException | NotEnoughActionsException
-//									| MovementException e1) {
-//								e1.printStackTrace();
-//							}
-//						  	
-//					}
-//					});
-//		        	
-//		        }); 
-//			    attackz.setOnAction(e -> { scene2.setOnMouseClicked(new EventHandler<MouseEvent>() {
-//
-//					public void handle(MouseEvent e) {
-//							 	try {
-//									myhero.get(0).attack();
-//									updatepast(gameBoard,myhero.get(0));
-//									 name.setText("Name:"+myhero.get(0).getName());
-//									   	type.setText("Type:"+myhero.get(0).herotype());
-//									   	acpts.setText("Action Points:"+myhero.get(0).getActionsAvailable());
-//									   	admg.setText("Attack Damage:"+myhero.get(0).getAttackDmg());
-//									   	vax.setText("No. of Vaccines:"+myhero.get(0).getVaccineInventory().size());
-//									   	supz.setText("No. of Supplies:"+myhero.get(0).getSupplyInventory().size());
-//											hp.setText("Health:"+myhero.get(0).getCurrentHp());
-//											updatepast(gameBoard,myhero.get(0));
-//								} catch (Exception e1) {
-//									e1.printStackTrace();
-//								}
-//						   	
-//					}
-//					});
-//		        });
+
 			    control.setOnAction(e-> {
 			    	if(myhero.get(0).getTarget() instanceof Hero) {
 			    	Hero b=(Hero)myhero.get(0).getTarget();
@@ -610,7 +529,6 @@ public void stylebutton2(Button button) {
         				g.getChildren().add(vac);
         				g.setRowIndex(vac, i1);	
         				g.setColumnIndex(vac,j);
-        				boolean flag=Game.map[i][j].isVisible();        				
      			}
         			else {
         				Rectangle suppi=new Rectangle(50,50);
@@ -620,8 +538,6 @@ public void stylebutton2(Button button) {
         				g.getChildren().add(suppi);
         				g.setRowIndex(suppi, i1);
         				g.setColumnIndex(suppi,j);
-        				boolean flag=Game.map[i][j].isVisible();
-//        				g.setVisible(flag);
         			}
         			
      				
@@ -644,7 +560,6 @@ public void stylebutton2(Button button) {
                 				int i2=i;
                 				int j2=j;
 
-                				boolean flag=Game.map[i][j].isVisible();
 
                 			
             				}
@@ -662,7 +577,6 @@ public void stylebutton2(Button button) {
                 				g.setColumnIndex(expo,j);
                 				int i2=i;
                 				int j2=j;
-                				boolean flag=Game.map[i][j].isVisible();
                 			
             				}
             				else {
@@ -676,7 +590,6 @@ public void stylebutton2(Button button) {
                 				g.setColumnIndex(medi,j);
                 				int i2=i;
                 				int j2=j;
-                				boolean flag=Game.map[i][j].isVisible();
                 			
             				}
             			}
@@ -690,7 +603,6 @@ public void stylebutton2(Button button) {
             				g.setColumnIndex(zomi,j);
             				int i2=i;
             				int j2=j;
-            				boolean flag=Game.map[i][j].isVisible();
             			
             			}
         			}
@@ -705,7 +617,6 @@ public void stylebutton2(Button button) {
         		    	
         		    	g.setRowIndex(tile, i1);
         				g.setColumnIndex(tile,j);
-        				boolean flag=Game.map[i][j].isVisible();
         			}
         		}
      	}
@@ -713,17 +624,7 @@ public void stylebutton2(Button button) {
 
 }
     }
-//    public void endgame(Hero h, GridPane g) throws InvalidTargetException, NotEnoughActionsException {
-//    	for(int i=0;i<15;i++) {
-//    		for(int j=0;j<15;j++) {
-//    			Game.map[i][j]=new CharacterCell(null);
-//    		
-//    		}
-//    	}    	
-//    	Game.endTurn();
-//    	Game.startGame(h);
-//    	updatepast(g,h);
-//    }
+
 
 public void movehero(GridPane g, GridPane gameBoard, Hero h, KeyEvent e) {
 	switch(e.getCode()) {
@@ -862,12 +763,7 @@ public void updatepast(GridPane gameBoard, Hero h) {
     gameBoard.setGridLinesVisible(true);
    
 	updatemap(gameBoard,h);
-//	if(Game.checkWin()) {
-//		Text win=new Text();
-//		styleText(win);
-//		win.setFill(Color.RED);
-//		gameBoard.getChildren().add(win);
-//	}
+
 	}
 public void targetsetter(Hero h, KeyEvent e) {
 	switch(e.getCode()) {
@@ -923,6 +819,7 @@ public void attacktest(GridPane gamee,Hero h,GridPane g, KeyEvent e)  {
 	case C:
 		try {
 			h.cure();
+			h.setTarget(null);
 			dealexceptionss(gamee,"ZOMBIE CURED!");
 		} catch (NoAvailableResourcesException e1) {
 			dealexception(gamee,"No vaccines available");
@@ -940,7 +837,18 @@ public void attacktest(GridPane gamee,Hero h,GridPane g, KeyEvent e)  {
 		break;
 	case U:
 		try {
+			int x=h.getCurrentHp();
+			int y=h.getTarget().getCurrentHp();
 			h.useSpecial();
+			dealexceptionss(gamee,"Special Action:ON");
+			if(h.herotype().equals("Medic")) {
+				if (h.getCurrentHp()>x)
+					dealexceptionzz(gamee,"Hero Healed!");
+				if(h.getTarget() instanceof Hero) {
+				if (y>h.getTarget().getCurrentHp())
+					dealexceptionzz(gamee,"Hero Healed!");
+				}
+			}
 		} catch (NoAvailableResourcesException e1) {
 			dealexception(gamee,"No supplies available");
 			e1.printStackTrace();
@@ -996,23 +904,7 @@ public void time(long millis, Runnable continutation) {
 	sleeper.setOnSucceeded(event -> continutation.run());
 	new Thread (sleeper).start();
 	}
-//public void damaged(GridPane g, String s, Point p) {
-//	Text x=new  Text();
-//	x.setText(s);
-//	x.setFont(Font.font("Arial",FontWeight.BOLD, 10));
-//	x.setFill(Color.RED);
-//	VBox a = new VBox();
-//	a.getChildren().add(x);
-//	a.setPrefWidth(50);
-//	a.setPrefHeight(50);
-//	g.getChildren().add(a);
-//	p.x=14-p.x;
-//	g.setRowIndex(a, p.x);
-//	g.setColumnIndex(a, p.y);
-//	time(2000, () -> {
-//		g.getChildren().remove(a);
-//	});
-//}
+
 public void checkend(GridPane g, String s) {
 	Button x=new Button(s);
 	VBox a=new VBox();
@@ -1076,4 +968,5 @@ public void dealexceptionzz (GridPane g, String s) {
 		g.getChildren().remove(a);
 	});
 }
+
 }
