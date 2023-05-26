@@ -15,27 +15,31 @@ public class Medic extends Hero {
 
 }
 	public void useSpecial() throws NoAvailableResourcesException, NotEnoughActionsException, InvalidTargetException, MovementException  {
-		if(this.isSpecialAction()==false) {
-		if(this.getActionsAvailable() == 0)
-		{
-			throw new NotEnoughActionsException();
-		}
-		if(!(this.getTarget() instanceof Hero)) 
-				throw new InvalidTargetException("must heal a Hero or self");
-		else {	
-			if(this.getSupplyInventory().size()!=0) {
-				((Collectible) this.getSupplyInventory()).use(this);
-				this.setSpecialAction(true);
-				this.setActionsAvailable(this.getActionsAvailable()-1);
-				this.heal();}
-			else {
-				throw new NoAvailableResourcesException ("Cannot supply");
-			}
-			}
-		}
-		else {
-			throw new NotEnoughActionsException();
-		}
+//		if(this.isSpecialAction()==false) {
+//		if(this.getActionsAvailable() == 0)
+//		{
+//			throw new NotEnoughActionsException();
+//		}
+//		if(!(this.getTarget() instanceof Hero)) 
+//				throw new InvalidTargetException("must heal a Hero or self");
+//		else {	
+//			if(this.getSupplyInventory().size()!=0) {
+//				((Collectible) this.getSupplyInventory()).use(this);
+//				this.setSpecialAction(true);
+//				this.setActionsAvailable(this.getActionsAvailable()-1);
+//				this.heal();}
+//			else {
+//				throw new NoAvailableResourcesException ("Cannot supply");
+//			}
+//			}
+//		}
+//		else {
+//			throw new NotEnoughActionsException();
+//		}
+		if (this.getTarget() instanceof Zombie)
+			throw new InvalidTargetException();
+		this.getSupplyInventory().remove(0);
+		this.heal();
 	}
 	
 	public void heal() throws InvalidTargetException, NoAvailableResourcesException, MovementException {

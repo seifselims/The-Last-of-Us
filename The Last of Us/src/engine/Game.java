@@ -216,7 +216,7 @@ public static void endTurn() throws InvalidTargetException, NotEnoughActionsExce
 	for(int i=0;i<zombies.size();i++) {				
 		zombies.get(i).attack();}	
 	
-	
+	if(zombies.size()<10) {
 	Zombie zombie=new Zombie();
 	int random= (int) (Math.random()*(14-0+1)+0);
 	int random1=(int)(Math.random()*(14-0+1)+0);
@@ -237,7 +237,7 @@ public static void endTurn() throws InvalidTargetException, NotEnoughActionsExce
 	map[random][random1]=charzombie;
 	zombies.add(zombie);
 	zombie.setLocation(new Point(random,random1));
-
+}
 	for(int i=0;i<zombies.size();i++) {
 		zombies.get(i).setTarget(null);
 	}

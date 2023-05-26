@@ -60,7 +60,10 @@ public int getAttackDmg() {
 public boolean adjacent(Character e) {
 	Point l=this.getLocation();
 	Point l2=e.getLocation();
-	if(l.x==14 && l.y==0){
+	if(e.getLocation()==this.getLocation()) {
+		return true;
+	}
+	else if(l.x==14 && l.y==0){
 		if (l2.x==l.x-1 && l2.y==l.y)
 			return true;
 		else if(l2.x==l.x && l2.y==l.y+1)

@@ -126,59 +126,7 @@ public void cure() throws NoAvailableResourcesException, InvalidTargetException,
 
 public abstract void useSpecial() throws NoAvailableResourcesException, Exception;
 
-//	public void setNewLoc(Point b) throws MovementException {
-//		Cell targetCell=Game.map[b.x][b.y];
-//		int x=this.getLocation().x;
-//		int y=this.getLocation().y;
-//			if(targetCell instanceof TrapCell) {
-//					this.setCurrentHp(this.getCurrentHp()-((TrapCell) targetCell).getTrapDamage());
-//					this.setLocation(b);
-//					CharacterCell newCell=new CharacterCell(this);
-//					targetCell.setVisible(true);
-//					Game.map[b.x][b.y] = newCell;
-//					targetCell=newCell;
-//					Game.map[x][y] = new CharacterCell(null);
-//					if(this.getCurrentHp()==0) {
-//						this.onCharacterDeath();
-//						this.setVisiblity(false);
-//						}
-//					else {
-//						this.setVisiblity(true);
-//					}
-//				
-//	}
-//	else if(targetCell instanceof CollectibleCell) {
-//		((CollectibleCell) targetCell).getCollectible().pickUp(this);
-//		this.setLocation(b);
-//		CharacterCell newCell=new CharacterCell(this);
-//		targetCell.setVisible(true);
-//		Game.map[b.x][b.y] = newCell;
-//		targetCell=newCell;	
-//		Game.map[x][y] = new CharacterCell(null);
-//		this.setVisiblity(true);
-//
-//	}
-//	else if(targetCell instanceof CharacterCell) {
-//		if (((CharacterCell) targetCell).getCharacter()==null) {
-//			this.setLocation(b);
-//			CharacterCell newCell=new CharacterCell(this);
-//			targetCell.setVisible(true);
-//			Game.map[b.x][b.y] = newCell;
-//			targetCell=newCell;	
-//			Game.map[x][y] = new CharacterCell(null);
-//			if(this.getCurrentHp()==0) {
-//				this.onCharacterDeath();
-//				this.setVisiblity(false);
-//				}
-//			else {
-//				this.setVisiblity(true);
-//			}
-//		}
-//		else	
-//		throw new MovementException("Cell is occupied");
-//	}
-//	
-//	}
+
 	
 public void move(Direction d) throws NotEnoughActionsException, MovementException {
 	if(this.getActionsAvailable()==0)
@@ -226,8 +174,21 @@ public void move(Direction d) throws NotEnoughActionsException, MovementExceptio
 }
 	public void attack2() throws NotEnoughActionsException {
 		if (this.specialAction==true){
-		Zombie e= (Zombie)this.getTarget();
-		e.setCurrentHp(e.getCurrentHp()-this.getAttackDmg());}
+//		Zombie e= (Zombie)this.getTarget();
+		this.getTarget().setTarget(this);
+		int x=this.getTarget().getCurrentHp()-this.getAttackDmg();
+		this.getTarget().setCurrentHp(x);
+		
+			int y=this.getCurrentHp()-(this.getTarget().getAttackDmg()/2);
+			this.setCurrentHp(y);	
+			if (this.getTarget().getCurrentHp()==0) {
+				this.getTarget().onCharacterDeath();
+			}
+			else if(this.getCurrentHp()==0) {
+				this.onCharacterDeath();
+			}
+			//		this.getTarget().defend(this);
+		}
 		else {
 			if (this.actionsAvailable==0) {
 				throw new NotEnoughActionsException("No action points");
@@ -349,15 +310,7 @@ public void move(Direction d) throws NotEnoughActionsException, MovementExceptio
 			return "Explorer";
 	}
 	
-/*	public static void main (String [] args) throws MovementException, NotEnoughActionsException {
-		Fighter x=new Fighter("Batman",100,22,294);
-		x.setLocation(new Point(12,12));
-		Game.map[14][0]=new CharacterCell(x);
-		x.move(Direction.UP);
-		System.out.prinln(x.getLocation());
-		
-		
-	}*/
+
 
 }
 

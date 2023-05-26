@@ -17,7 +17,7 @@ public void useSpecial() throws NoAvailableResourcesException, NotEnoughActionsE
 	throw new NoAvailableResourcesException("No available resources");	}
 	else {
 		setSpecialAction(true);
-		this.getSupplyInventory().remove(this.getSupplyInventory().size()-1);
+		this.getSupplyInventory().remove(0);
 	this.attack2();
 	}
 }
