@@ -499,7 +499,7 @@ public void stylebutton2(Button button) {
 }
     public void updatemap (GridPane g, Hero h) {
     	Image vaci=new Image("file:Vaccines.png");
-    	Image supp=new Image("file:isolated-red-apple-pixel-art-white-background-apple-big-pixels-apple-pixel-art-106403017-removebg-preview (1).png");
+    	Image supp=new Image("file:isolated-red-apple-pixel-art-white-background-apple-big-pixels-apple-pixel-art-106403017-removebg-preview.png");
     	Image figh=new Image("file:c11fd6e23823559e0df4e6d99fc6094c-removebg-preview.png");
     	Image zom=new Image("file:zombie_walk___pixel_by_genbaku_d8fh6px-fullview.png");
     	Image exp=new Image("file:yan-silva-torres-de-siqueira-yan-pixel-removebg-preview.png");
